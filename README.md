@@ -1,4 +1,4 @@
-# VideoCompareGUI
+# Video-Compare GUI
 GUI for the Video-Compare Tool
 
 https://github.com/pixop/video-compare/
