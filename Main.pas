@@ -4,7 +4,8 @@ interface
 
 uses
   Classes, Controls, Forms, Messages, StdCtrls, FileCtrl, Mask, JvExMask,
-  JvToolEdit, ActnList, ExtCtrls;
+  SysUtils,
+  JvToolEdit, ActnList, ExtCtrls, ComCtrls, System.Actions;
 
 type
   TFrmVideoCompare = class(TForm)
@@ -16,40 +17,97 @@ type
     flIn2: TFileListBox;
     actlstMain: TActionList;
     actLaunch: TAction;
-    pnlRight: TPanel;
-    pnlControls: TPanel;
-    btnLaunch: TButton;
+    splFile: TSplitter;
+    pcMain: TPageControl;
+    tsDefault: TTabSheet;
     chkHighDPI: TCheckBox;
-    grpWindowSize: TGroupBox;
+    grpMode: TGroupBox;
+    cbbMode: TComboBox;
+    chk10Bit: TCheckBox;
+    grpDisplay: TGroupBox;
+    cbbDisplay: TComboBox;
+    grpAutoLoopMode: TGroupBox;
+    cbbAutoLoopMode: TComboBox;
+    grpFrameBufferSize: TGroupBox;
+    edtFrameBufferSize: TEdit;
+    rgWindow: TRadioGroup;
+    pnlWindowSize: TPanel;
     lblWindowSizeX: TLabel;
     edtWidth: TEdit;
     edtHeight: TEdit;
-    chkWindowSize: TCheckBox;
-    lbl1: TLabel;
+    btnLaunch: TButton;
+    tsHotKeys: TTabSheet;
+    lblHotKeys: TLabel;
+    chkAutoFilters: TCheckBox;
+    grpWheelSensitivity: TGroupBox;
+    edtWheelSensitivity: TEdit;
     grpShift: TGroupBox;
     edtShift: TEdit;
-    grpMode: TGroupBox;
-    cbbMode: TComboBox;
+    grpToneMapMode: TGroupBox;
+    cbbToneMapMode: TComboBox;
+    pnlTop: TPanel;
+    mmoParams: TMemo;
+    splParams: TSplitter;
+    grpPeakNits: TGroupBox;
+    edtPeakNitsLeft: TEdit;
+    edtPeakNitsRight: TEdit;
+    grpBoostTone: TGroupBox;
+    edtBoostTone: TEdit;
+    tsAdvanced: TTabSheet;
+    grpFilter: TGroupBox;
+    lblFilterLeft: TLabel;
+    lblFilterRight: TLabel;
+    edtFilterLeft: TEdit;
+    edtFilterRight: TEdit;
+    grpDecoder: TGroupBox;
+    lblDecoderLeft: TLabel;
+    lblDecoderRight: TLabel;
+    edtDecoderLeft: TEdit;
+    edtDecoderRight: TEdit;
+    grpDemuxer: TGroupBox;
+    lblDemuxerLeft: TLabel;
+    lblDemuxerRight: TLabel;
+    edtDemuxerLeft: TEdit;
+    edtDemuxerRight: TEdit;
+    grpHardwareAcceleration: TGroupBox;
+    lblHardwareAccelerationLeft: TLabel;
+    lblHardwareAccelerationRight: TLabel;
+    edtHardwareAccelerationLeft: TEdit;
+    edtHardwareAccelerationRight: TEdit;
+    grplibvmafFilterOptions: TGroupBox;
+    edtlibvmafFilterOptions: TEdit;
+    procedure FormCreate(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure OnChange(Sender: TObject);
     procedure dirEdtIn1Change(Sender: TObject);
     procedure dirEdtIn2Change(Sender: TObject);
     procedure actLaunchUpdate(Sender: TObject);
     procedure actLaunchExecute(Sender: TObject);
-    procedure chkWindowSizeClick(Sender: TObject);
+    procedure rgWindowClick(Sender: TObject);
+    procedure cbbToneMapModeClick(Sender: TObject);    
+    procedure edtWidthKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure edtHeightKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure BlockKeyPress(Sender: TObject; var Key: Char);
     procedure UnsignedKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure UnsignedKeyPress(Sender: TObject; var Key: Char);
-    procedure edtWidthKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure edtHeightKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure SignedKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure SignedKeyPress(Sender: TObject; var Key: Char);
+    procedure FloatKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FloatKeyPress(Sender: TObject; var Key: Char);
+    procedure pnlTopResize(Sender: TObject);
   private
     { Private-Deklarationen }
+    fLF : TFormatSettings;
+    fParams : String;
     procedure WMDROPFILES(var Msg: TMessage); message WM_DROPFILES;
   protected
     procedure CreateWnd; override;
     procedure DestroyWindowHandle; override;
   public
     { Public-Deklarationen }
+    function  LoadParametersFromFile( FileName : String ) : Integer;
+    procedure SaveParametersToFile( FileName : String );
+    function  CreateParameters : String;
   end;
 
 var
@@ -59,7 +117,8 @@ var
 implementation
 
 uses
-  Windows, SysUtils, ShellAPI,
+  Windows, ShellAPI,
+  IniFiles,
   uTLH.SysUtils,
   uTLH.ComponentTools;
 
@@ -124,6 +183,175 @@ begin
 end;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+const
+  DEFAULT_WIDTH          = 1280;
+  DEFAULT_HEIGHT         = 1024;
+  DEFAULT_BUFFER_SIZE    = 50;
+  DEFAULT_WHEEL          = 1.0;
+  DEFAULT_WHEEL_INTERNAL = -1.0;
+  DEFAULT_PEAK_NITS      = 100;
+  DEFAULT_BOOST_TONE     = 1.0;
+
+  PARAMETER_SECTION      = 'Parameter';
+  PARAMETER_FILE         = PARAMETER_SECTION + '.ini';
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+procedure TFrmVideoCompare.FormCreate(Sender: TObject);
+var
+  i : Integer;
+begin
+  cbbDisplay.Clear;
+  for i := 0 to Screen.MonitorCount-1 do
+    cbbDisplay.Items.Add( IntToStr( i ) );
+  cbbDisplay.ItemIndex := 0;
+
+  LoadParametersFromFile( ExtractFilePath( ParamStr( 0 ) ) + PARAMETER_FILE );
+
+  {$IF CompilerVersion >= 30}
+  fLF := TFormatSettings.Create( LOCALE_SYSTEM_DEFAULT );
+  {$ELSE}
+  GetLocaleFormatSettings( LOCALE_SYSTEM_DEFAULT, fLF );
+  {$IFEND}
+  fLF.DecimalSeparator := '.';
+
+  OnChange( Sender );
+end;
+
+procedure TFrmVideoCompare.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  SaveParametersToFile( ExtractFilePath( ParamStr( 0 ) ) + PARAMETER_FILE );
+end;
+
+procedure TFrmVideoCompare.OnChange(Sender: TObject);
+begin
+  fParams := CreateParameters;
+  mmoParams.Text := fParams;
+end;
+
+procedure TFrmVideoCompare.pnlTopResize(Sender: TObject);
+begin
+  grpFile1.Width := ( Width - pcMain.Width ) div 2;
+end;
+
+procedure TFrmVideoCompare.rgWindowClick(Sender: TObject);
+begin
+  SetEnabledForControls( pnlWindowSize, TRadioGroup( Sender ).ItemIndex = 1 ); // Custom
+  OnChange( Sender );
+end;
+
+procedure TFrmVideoCompare.cbbToneMapModeClick(Sender: TObject);
+begin
+  SetEnabledForControls( grpPeakNits, TComboBox( Sender ).ItemIndex = 0 );
+  SetEnabledForControls( grpBoostTone, TComboBox( Sender ).ItemIndex = 0 );
+  OnChange( Sender );
+end;
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+function TFrmVideoCompare.LoadParametersFromFile( FileName : String ) : Integer;
+var
+  Ini : TIniFile;
+  S   : String;
+begin
+  if NOT FileExists( FileName ) then
+    begin
+    result := -2;
+    Exit;
+    end;
+
+  Ini := nil;
+  try
+    Ini := TIniFile.Create( FileName );
+  except
+    result := -1;
+    Ini.free;
+    Exit;
+  end;
+
+  S := Ini.ReadString( PARAMETER_SECTION, 'Directory1', '' );
+  if DirectoryExists( S ) then
+    flIn1.Directory := S;
+
+  S := Ini.ReadString( PARAMETER_SECTION, 'Directory2', '' );
+  if DirectoryExists( S ) then
+    flIn2.Directory := S;
+
+  chkHighDPI.Checked                := Ini.ReadBool( PARAMETER_SECTION, 'High DPI', False );
+  chk10Bit.Checked                  := Ini.ReadBool( PARAMETER_SECTION, '10 Bit', False );
+  cbbDisplay.ItemIndex              := Ini.ReadInteger( PARAMETER_SECTION, 'Display', 0 );
+  cbbMode.ItemIndex                 := Ini.ReadInteger( PARAMETER_SECTION, 'Mode', 0 );
+  rgWindow.ItemIndex                := Ini.ReadInteger( PARAMETER_SECTION, 'Window Mode', 0 );
+  edtWidth.Text                     := IntToStr( Ini.ReadInteger( PARAMETER_SECTION, 'Window Width', DEFAULT_WIDTH ) );
+  edtHeight.Text                    := IntToStr( Ini.ReadInteger( PARAMETER_SECTION, 'Window Height', DEFAULT_HEIGHT ) );
+  cbbAutoLoopMode.ItemIndex         := Ini.ReadInteger( PARAMETER_SECTION, 'AutoLoop Mode', 0 );
+  edtFrameBufferSize.Text           := IntToStr( Ini.ReadInteger( PARAMETER_SECTION, 'Frame Buffer Size', DEFAULT_BUFFER_SIZE ) );
+//  edtShift.Text                     := FloatToStr( Ini.ReadFloat( PARAMETER_SECTION, 'Shift', 0 ) );
+  edtWheelSensitivity.Text          := FloatToStr( Ini.ReadFloat( PARAMETER_SECTION, 'Wheel Sensitivity', DEFAULT_WHEEL_INTERNAL ) );
+  cbbToneMapMode.ItemIndex          := Ini.ReadInteger( PARAMETER_SECTION, 'ToneMap Mode', 0 );
+  edtPeakNitsLeft.Text              := IntToStr( Ini.ReadInteger( PARAMETER_SECTION, 'Peak Nits (Left)', DEFAULT_PEAK_NITS ) );
+  edtPeakNitsRight.Text             := IntToStr( Ini.ReadInteger( PARAMETER_SECTION, 'Peak Nits (Right)', DEFAULT_PEAK_NITS ) );
+  edtBoostTone.Text                 := FloatToStr( Ini.ReadFloat( PARAMETER_SECTION, 'Boost Tone', DEFAULT_BOOST_TONE ) );
+  edtFilterLeft.Text                := Ini.ReadString( PARAMETER_SECTION, 'Filter (Left)', '' );
+  edtFilterRight.Text               := Ini.ReadString( PARAMETER_SECTION, 'Filter (Right)', '' );
+  edtDemuxerLeft.Text               := Ini.ReadString( PARAMETER_SECTION, 'Demuxer (Left)', '' );
+  edtDemuxerRight.Text              := Ini.ReadString( PARAMETER_SECTION, 'Demuxer (Right)', '' );
+  edtDecoderLeft.Text               := Ini.ReadString( PARAMETER_SECTION, 'Decoder (Left)', '' );
+  edtDecoderRight.Text              := Ini.ReadString( PARAMETER_SECTION, 'Decoder (Right)', '' );
+  edtHardwareAccelerationLeft.Text  := Ini.ReadString( PARAMETER_SECTION, 'Hardware Acceleration (Left)', '' );
+  edtHardwareAccelerationRight.Text := Ini.ReadString( PARAMETER_SECTION, 'Hardware Acceleration (Right)', '' );
+  edtlibvmafFilterOptions.Text      := Ini.ReadString( PARAMETER_SECTION, 'libvmaf Filter Options', '' );
+  chkAutoFilters.Checked            := Ini.ReadBool( PARAMETER_SECTION, 'Auto Filters', True );
+
+  Ini.Free;
+
+  result := 0;
+end;
+
+procedure TFrmVideoCompare.SaveParametersToFile( FileName : String );
+var
+  Ini : TIniFile;
+begin
+  Ini := nil;
+  try
+    Ini := TIniFile.Create( FileName );
+  except
+    Ini.free;
+    Exit;
+  end;
+
+  Ini.WriteString( PARAMETER_SECTION, 'Directory1', flIn1.Directory );
+  Ini.WriteString( PARAMETER_SECTION, 'Directory2', flIn2.Directory );
+
+  Ini.WriteBool( PARAMETER_SECTION, 'High DPI', chkHighDPI.Checked );
+  Ini.WriteBool( PARAMETER_SECTION, '10 Bit', chk10Bit.Checked );
+  Ini.WriteInteger( PARAMETER_SECTION, 'Display', cbbDisplay.ItemIndex );
+  Ini.WriteInteger( PARAMETER_SECTION, 'Mode', cbbMode.ItemIndex );
+
+  Ini.WriteInteger( PARAMETER_SECTION, 'Window Mode', rgWindow.ItemIndex );
+  Ini.WriteInteger( PARAMETER_SECTION, 'Window Width', StrToIntDef( edtWidth.Text, DEFAULT_WIDTH ) );
+  Ini.WriteInteger( PARAMETER_SECTION, 'Window Height', StrToIntDef( edtHeight.Text, DEFAULT_HEIGHT ) );
+  Ini.WriteInteger( PARAMETER_SECTION, 'AutoLoop Mode', cbbAutoLoopMode.ItemIndex );
+  Ini.WriteInteger( PARAMETER_SECTION, 'Frame Buffer Size', StrToIntDef( edtFrameBufferSize.Text, DEFAULT_BUFFER_SIZE ) );
+//  Ini.WriteFloat( PARAMETER_SECTION, 'Shift', StrToFloatDef( edtShift.Text, 0 ) );
+  Ini.WriteFloat( PARAMETER_SECTION, 'Wheel Sensitivity', StrToFloatDef( edtWheelSensitivity.Text, DEFAULT_WHEEL_INTERNAL ) );
+  Ini.WriteInteger( PARAMETER_SECTION, 'ToneMap Mode', cbbToneMapMode.ItemIndex );
+  Ini.WriteInteger( PARAMETER_SECTION, 'Peak Nits (Left)', StrToIntDef( edtPeakNitsLeft.Text, DEFAULT_PEAK_NITS ) );
+  Ini.WriteInteger( PARAMETER_SECTION, 'Peak Nits (Right)', StrToIntDef( edtPeakNitsRight.Text, DEFAULT_PEAK_NITS ) );
+  Ini.WriteFloat( PARAMETER_SECTION, 'Boost Tone', StrToFloatDef( edtBoostTone.Text, DEFAULT_BOOST_TONE ) );
+  Ini.WriteString( PARAMETER_SECTION, 'Filter (Left)', edtFilterLeft.Text );
+  Ini.WriteString( PARAMETER_SECTION, 'Filter (Right)', edtFilterRight.Text );
+  Ini.WriteString( PARAMETER_SECTION, 'Demuxer (Left)', edtDemuxerLeft.Text );
+  Ini.WriteString( PARAMETER_SECTION, 'Demuxer (Right)', edtDemuxerRight.Text );
+  Ini.WriteString( PARAMETER_SECTION, 'Decoder (Left)', edtDecoderLeft.Text );
+  Ini.WriteString( PARAMETER_SECTION, 'Decoder (Right)', edtDecoderRight.Text );
+  Ini.WriteString( PARAMETER_SECTION, 'Hardware Acceleration (Left)', edtHardwareAccelerationLeft.Text );
+  Ini.WriteString( PARAMETER_SECTION, 'Hardware Acceleration (Right)', edtHardwareAccelerationRight.Text );
+  Ini.WriteString( PARAMETER_SECTION, 'libvmaf Filter Options', edtlibvmafFilterOptions.Text );
+  Ini.WriteBool( PARAMETER_SECTION, 'Auto Filters', chkAutoFilters.Checked );
+
+  Ini.free;
+end;
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 procedure TFrmVideoCompare.dirEdtIn1Change(Sender: TObject);
 begin
   if DirectoryExists( TJvDirectoryEdit( Sender ).Directory ) then
@@ -144,12 +372,6 @@ begin
     end
   else
     flIn2.Clear;
-end;
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-procedure TFrmVideoCompare.chkWindowSizeClick(Sender: TObject);
-begin
-  SetEnabledForControls( grpWindowSize, TCheckBox( Sender ).Checked );
 end;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -188,6 +410,18 @@ begin
   OnKeyPressCheckChar( Sender, Key, kpmUnsigned );
 end;
 
+procedure TFrmVideoCompare.FloatKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  OnKeyDownManipulateNumbersViaUpDown( Sender, Key, Shift, kpmFloat );
+end;
+
+procedure TFrmVideoCompare.FloatKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  OnKeyPressCheckChar( Sender, Key, kpmFloat );
+end;
+
 procedure TFrmVideoCompare.edtWidthKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 var
@@ -217,6 +451,98 @@ begin
 end;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+function TFrmVideoCompare.CreateParameters : String;
+var
+  i : Integer;
+  D : Double;
+begin
+  result := '';
+  if chkHighDPI.Checked then
+    result := '--high-dpi '
+  else
+    result := '';
+
+  if chk10Bit.Checked then
+    result := result + '--10-bpc ';
+
+  if ( cbbDisplay.ItemIndex > 0 ) then
+    result := result + Format( '--display-number %d ', [ cbbDisplay.ItemIndex ] );
+
+  case cbbMode.ItemIndex of
+    1 : result := result + '--mode vstack ';
+    2 : result := result + '--mode hstack ';
+  end;
+
+  case rgWindow.ItemIndex of
+    1 : result := result + Format( '--window-size %dx%d ', [ StrToIntDef( edtWidth.Text, DEFAULT_WIDTH ), StrToIntDef( edtHeight.Text, DEFAULT_HEIGHT ) ] );
+    2 : result := result + '--window-fit-display ';
+  end;
+
+  case cbbAutoLoopMode.ItemIndex of
+    1 : result := result + '--auto-loop-mode on ';
+    2 : result := result + '--auto-loop-mode pp ';
+  end;
+
+  i := StrToIntDef( edtFrameBufferSize.Text, DEFAULT_BUFFER_SIZE );
+  if ( i <> DEFAULT_BUFFER_SIZE ) then
+    result := result + Format( '--frame-buffer-size %d ', [ i ] );
+ 
+  D := StrToFloatDef( edtShift.Text, 0 );
+  if ( D <> 0 ) then
+    result := result + Format( '--time-shift %.3f ', [ D ], fLF );
+
+  D := StrToFloatDef( edtWheelSensitivity.Text, DEFAULT_WHEEL_INTERNAL );
+  if ( D <> DEFAULT_WHEEL ) then
+    result := result + Format( '--wheel-sensitivity %.3f ', [ D ], fLF );
+
+  case cbbToneMapMode.ItemIndex of
+    0 : begin
+        i := StrToIntDef( edtPeakNitsLeft.Text, DEFAULT_PEAK_NITS );
+        if ( i <> DEFAULT_PEAK_NITS ) then
+          result := result + Format( '--left-peak-nits %d ', [ i ] );
+
+        i := StrToIntDef( edtPeakNitsRight.Text, DEFAULT_PEAK_NITS );
+        if ( i <> DEFAULT_PEAK_NITS ) then
+          result := result + Format( '--right-peak-nits %d ', [ i ] );
+
+        D := StrToFloatDef( edtBoostTone.Text, DEFAULT_BOOST_TONE );
+        if ( D <> DEFAULT_BOOST_TONE ) then
+          result := result + Format( '--boost-tone %.2f ', [ D ], fLF );
+        end;
+    1 : result := result + '--tone-map-mode on ';
+    2 : result := result + '--tone-map-mode rel ';
+  end;
+
+  if ( edtFilterLeft.Text <> '' ) then
+    result := result + '--left-filters ' + edtFilterLeft.Text + ' ';
+  if ( edtFilterRight.Text <> '' ) then
+    result := result + '--right-filters ' + edtFilterRight.Text + ' ';
+
+  if ( edtDemuxerLeft.Text <> '' ) then
+    result := result + '--left-demuxer ' + edtDemuxerLeft.Text + ' ';
+  if ( edtDemuxerRight.Text <> '' ) then
+    result := result + '--right-demuxer ' + edtDemuxerRight.Text + ' ';
+
+  if ( edtDecoderLeft.Text <> '' ) then
+    result := result + '--left-decoder ' + edtDecoderLeft.Text + ' ';
+  if ( edtDecoderRight.Text <> '' ) then
+    result := result + '--right-decoder ' + edtDecoderRight.Text + ' ';
+
+  if ( edtHardwareAccelerationLeft.Text <> '' ) then
+    result := result + '--left-hwaccel ' + edtHardwareAccelerationLeft.Text + ' ';
+  if ( edtHardwareAccelerationRight.Text <> '' ) then
+    result := result + '--right-hwaccel ' + edtHardwareAccelerationRight.Text + ' ';
+
+  if ( edtlibvmafFilterOptions.Text <> '' ) then
+    result := result + '--libvmaf-options ' + edtlibvmafFilterOptions.Text + ' ';
+
+  if NOT chkAutoFilters.Checked then
+    result := result + '--no-auto-filters ';
+
+  if ( flIn1.FileName <> flIn2.FileName ) then
+  result := result + Format( '"%s" "%s"', [ flIn1.FileName, flIn2.FileName ] );
+end;
+
 procedure TFrmVideoCompare.actLaunchUpdate(Sender: TObject);
 begin
   TAction( Sender ).Enabled := ( flIn1.ItemIndex >= 0 ) AND ( flIn2.ItemIndex >= 0 );
@@ -225,29 +551,11 @@ end;
 procedure TFrmVideoCompare.actLaunchExecute(Sender: TObject);
 const
   FILENAME = 'video-compare.exe';
-var
-  Params : string;
-  i      : Int64;
 begin
-  if chkHighDPI.Checked then
-    Params := '--high-dpi '
-  else
-    Params := '';
+  if ( flIn1.FileName = flIn2.FileName ) then
+    Exit;
 
-  if chkWindowSize.Checked then
-    Params := Params + Format( '--window-size %dx%d ', [ StrToIntDef( edtWidth.Text, 1280 ), StrToIntDef( edtHeight.Text, 1024 ) ] );
-
-  case cbbMode.ItemIndex of
-    1 : Params := Params + '--mode vstack ';
-    2 : Params := Params + '--mode hstack ';
-  end;
-
-  i := StrToIntDef( edtShift.Text, 0 );
-  if ( i <> 0 ) then
-    Params := Params + Format( '--time-shift %d ', [ i ] );
-
-  Params := Params + Format( '"%s" "%s"', [ flIn1.FileName, flIn2.FileName ] );
-  {result := }ExecutePE( nil, ExtractFilePath( ParamStr( 0 ) ) + FILENAME, Params, ''{WorkingDirectory}, nil{CaptureLineProc}, ExecutePE_DefaultOptions-[ eoHideWindow, eoWaitForTerminate ] );
+  {result := }ExecutePE( nil, ExtractFilePath( ParamStr( 0 ) ) + FILENAME, fParams, ''{WorkingDirectory}, nil{CaptureLineProc}, ExecutePE_DefaultOptions-[ eoHideWindow, eoWaitForTerminate ] );
 end;
 
 end.
