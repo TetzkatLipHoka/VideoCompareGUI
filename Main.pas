@@ -269,11 +269,11 @@ begin
 
   S := Ini.ReadString( PARAMETER_SECTION, 'Directory1', '' );
   if DirectoryExists( S ) then
-    flIn1.Directory := S;
+    dirEdtIn1.Directory := S;
 
   S := Ini.ReadString( PARAMETER_SECTION, 'Directory2', '' );
   if DirectoryExists( S ) then
-    flIn2.Directory := S;
+    dirEdtIn2.Directory := S;
 
   chkHighDPI.Checked                := Ini.ReadBool( PARAMETER_SECTION, 'High DPI', False );
   chk10Bit.Checked                  := Ini.ReadBool( PARAMETER_SECTION, '10 Bit', False );
@@ -318,8 +318,8 @@ begin
     Exit;
   end;
 
-  Ini.WriteString( PARAMETER_SECTION, 'Directory1', flIn1.Directory );
-  Ini.WriteString( PARAMETER_SECTION, 'Directory2', flIn2.Directory );
+  Ini.WriteString( PARAMETER_SECTION, 'Directory1', dirEdtIn1.Directory );
+  Ini.WriteString( PARAMETER_SECTION, 'Directory2', dirEdtIn2.Directory );
 
   Ini.WriteBool( PARAMETER_SECTION, 'High DPI', chkHighDPI.Checked );
   Ini.WriteBool( PARAMETER_SECTION, '10 Bit', chk10Bit.Checked );
