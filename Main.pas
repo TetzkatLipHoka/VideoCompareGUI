@@ -227,7 +227,7 @@ const
   FILENAME = 'video-compare.exe';
 var
   Params : string;
-  i      : Integer;
+  i      : Int64;
 begin
   if chkHighDPI.Checked then
     Params := '--high-dpi '
