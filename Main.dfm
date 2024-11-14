@@ -2,8 +2,8 @@ object FrmVideoCompare: TFrmVideoCompare
   Left = 603
   Top = 307
   Caption = 'Video Compare'
-  ClientHeight = 503
-  ClientWidth = 700
+  ClientHeight = 543
+  ClientWidth = 702
   Color = clBtnFace
   DragMode = dmAutomatic
   Font.Charset = DEFAULT_CHARSET
@@ -22,8 +22,8 @@ object FrmVideoCompare: TFrmVideoCompare
   TextHeight = 13
   object splParams: TSplitter
     Left = 0
-    Top = 458
-    Width = 700
+    Top = 498
+    Width = 702
     Height = 3
     Cursor = crVSplit
     Align = alBottom
@@ -31,28 +31,28 @@ object FrmVideoCompare: TFrmVideoCompare
   object pnlTop: TPanel
     Left = 0
     Top = 0
-    Width = 700
-    Height = 458
+    Width = 702
+    Height = 498
     Align = alClient
     TabOrder = 0
     OnResize = pnlTopResize
     object splFile: TSplitter
       Left = 193
       Top = 1
-      Height = 456
+      Height = 496
     end
     object grpFile2: TGroupBox
       Left = 196
       Top = 1
-      Width = 185
-      Height = 456
+      Width = 187
+      Height = 496
       Align = alClient
       Caption = 'File 2'
       TabOrder = 0
       object dirEdtIn2: TJvDirectoryEdit
         Left = 2
         Top = 15
-        Width = 181
+        Width = 183
         Height = 21
         Align = alTop
         TabOrder = 0
@@ -62,8 +62,8 @@ object FrmVideoCompare: TFrmVideoCompare
       object flIn2: TFileListBox
         Left = 2
         Top = 36
-        Width = 181
-        Height = 418
+        Width = 183
+        Height = 458
         Align = alClient
         ItemHeight = 13
         Mask = 
@@ -79,7 +79,7 @@ object FrmVideoCompare: TFrmVideoCompare
       Left = 1
       Top = 1
       Width = 192
-      Height = 456
+      Height = 496
       Align = alLeft
       Caption = 'File 1'
       TabOrder = 1
@@ -97,7 +97,7 @@ object FrmVideoCompare: TFrmVideoCompare
         Left = 2
         Top = 36
         Width = 188
-        Height = 418
+        Height = 458
         Align = alClient
         ItemHeight = 13
         Mask = 
@@ -110,15 +110,18 @@ object FrmVideoCompare: TFrmVideoCompare
       end
     end
     object pcMain: TPageControl
-      Left = 381
+      Left = 383
       Top = 1
       Width = 318
-      Height = 456
+      Height = 496
       ActivePage = tsDefault
       Align = alRight
       TabOrder = 2
       object tsDefault: TTabSheet
         Caption = 'Default'
+        DesignSize = (
+          310
+          468)
         object chkHighDPI: TCheckBox
           Left = 187
           Top = 46
@@ -306,10 +309,11 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object btnLaunch: TButton
           Left = 0
-          Top = 403
+          Top = 443
           Width = 310
           Height = 25
           Action = actLaunch
+          Anchors = [akLeft, akBottom]
           TabOrder = 8
         end
         object chkAutoFilters: TCheckBox
@@ -681,7 +685,7 @@ object FrmVideoCompare: TFrmVideoCompare
           Left = 0
           Top = 0
           Width = 310
-          Height = 428
+          Height = 468
           Align = alClient
           Caption = 
             '- H: Toggle on-screen help text for controls'#13#10'- Space: Toggle pl' +
@@ -713,8 +717,8 @@ object FrmVideoCompare: TFrmVideoCompare
   end
   object mmoParams: TMemo
     Left = 0
-    Top = 461
-    Width = 700
+    Top = 501
+    Width = 702
     Height = 42
     Align = alBottom
     ReadOnly = True
