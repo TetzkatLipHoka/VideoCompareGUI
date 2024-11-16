@@ -76,6 +76,10 @@ type
     edtHardwareAccelerationRight: TEdit;
     grplibvmafFilterOptions: TGroupBox;
     edtlibvmafFilterOptions: TEdit;
+    btnCreateShellLink: TButton;
+    actCreateShellLink: TAction;
+    actRemoveShellLink: TAction;
+    btnRemoveShellLink: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure OnChange(Sender: TObject);
@@ -95,6 +99,9 @@ type
     procedure FloatKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FloatKeyPress(Sender: TObject; var Key: Char);
     procedure pnlTopResize(Sender: TObject);
+    procedure actCreateShellLinkExecute(Sender: TObject);
+    procedure actRemoveShellLinkUpdate(Sender: TObject);
+    procedure actRemoveShellLinkExecute(Sender: TObject);
   private
     { Private-Deklarationen }
     fLF : TFormatSettings;
@@ -107,7 +114,7 @@ type
     { Public-Deklarationen }
     function  LoadParametersFromFile( FileName : String ) : Integer;
     procedure SaveParametersToFile( FileName : String );
-    function  CreateParameters : String;
+    function  CreateParameters( WithFileName : Boolean = True ) : String;
   end;
 
 var
@@ -119,6 +126,7 @@ implementation
 uses
   Windows, ShellAPI,
   IniFiles,
+  uTLH.Files,
   uTLH.SysUtils,
   uTLH.ComponentTools;
 
@@ -194,6 +202,10 @@ const
 
   PARAMETER_SECTION      = 'Parameter';
   PARAMETER_FILE         = PARAMETER_SECTION + '.ini';
+
+  EXECUTABLE             = 'video-compare.exe';
+  SHORTCUT_NAME          = 'VideoCompare';
+  EXT_LNK                = '.lnk';
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
 procedure TFrmVideoCompare.FormCreate(Sender: TObject);
@@ -451,7 +463,7 @@ begin
 end;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-function TFrmVideoCompare.CreateParameters : String;
+function TFrmVideoCompare.CreateParameters( WithFileName : Boolean = True ) : String;
 var
   i : Integer;
   D : Double;
@@ -539,8 +551,8 @@ begin
   if NOT chkAutoFilters.Checked then
     result := result + '--no-auto-filters ';
 
-  if ( flIn1.FileName <> flIn2.FileName ) then
-  result := result + Format( '"%s" "%s"', [ flIn1.FileName, flIn2.FileName ] );
+  if WithFileName AND ( flIn1.FileName <> flIn2.FileName ) then
+    result := result + Format( '"%s" "%s"', [ flIn1.FileName, flIn2.FileName ] );
 end;
 
 procedure TFrmVideoCompare.actLaunchUpdate(Sender: TObject);
@@ -548,14 +560,39 @@ begin
   TAction( Sender ).Enabled := ( flIn1.ItemIndex >= 0 ) AND ( flIn2.ItemIndex >= 0 );
 end;
 
+procedure TFrmVideoCompare.actCreateShellLinkExecute(Sender: TObject);
+begin
+  try
+    CreateShellLink( ExtractFilePath( ParamStr( 0 ) ) + EXECUTABLE, GetShellFolder( CSIDL_SENDTO ), SHORTCUT_NAME + EXT_LNK, ''{WorkingDir}, CreateParameters( False ), SHORTCUT_NAME{Desc} );
+  except
+
+  end;
+end;
+
+procedure TFrmVideoCompare.actRemoveShellLinkUpdate(Sender: TObject);
+begin
+  try
+    TAction( Sender ).Enabled := FileExists( GetShellFolder( CSIDL_SENDTO ) + SHORTCUT_NAME + EXT_LNK );
+  except
+    TAction( Sender ).Enabled := False;
+  end;
+end;
+
+procedure TFrmVideoCompare.actRemoveShellLinkExecute(Sender: TObject);
+begin
+  try
+    DeleteFile( PChar( GetShellFolder( CSIDL_SENDTO ) + SHORTCUT_NAME + EXT_LNK ) );
+  except
+
+  end;
+end;
+
 procedure TFrmVideoCompare.actLaunchExecute(Sender: TObject);
-const
-  FILENAME = 'video-compare.exe';
 begin
   if ( flIn1.FileName = flIn2.FileName ) then
     Exit;
 
-  {result := }ExecutePE( nil, ExtractFilePath( ParamStr( 0 ) ) + FILENAME, fParams, ''{WorkingDirectory}, nil{CaptureLineProc}, ExecutePE_DefaultOptions-[ eoHideWindow, eoWaitForTerminate ] );
+  {result := }ExecutePE( nil, ExtractFilePath( ParamStr( 0 ) ) + EXECUTABLE, fParams, ''{WorkingDirectory}, nil{CaptureLineProc}, ExecutePE_DefaultOptions-[ eoHideWindow, eoWaitForTerminate ] );
 end;
 
 end.

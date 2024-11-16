@@ -476,6 +476,22 @@ object FrmVideoCompare: TFrmVideoCompare
             OnKeyPress = FloatKeyPress
           end
         end
+        object btnCreateShellLink: TButton
+          Left = 1
+          Top = 188
+          Width = 154
+          Height = 25
+          Action = actCreateShellLink
+          TabOrder = 15
+        end
+        object btnRemoveShellLink: TButton
+          Left = 157
+          Top = 188
+          Width = 154
+          Height = 25
+          Action = actRemoveShellLink
+          TabOrder = 16
+        end
       end
       object tsAdvanced: TTabSheet
         Caption = 'Advanced'
@@ -732,6 +748,15 @@ object FrmVideoCompare: TFrmVideoCompare
       Caption = '&Launch'
       OnExecute = actLaunchExecute
       OnUpdate = actLaunchUpdate
+    end
+    object actCreateShellLink: TAction
+      Caption = 'Create SendTo-ShortCut'
+      OnExecute = actCreateShellLinkExecute
+    end
+    object actRemoveShellLink: TAction
+      Caption = 'Remove SendTo-ShortCut'
+      OnExecute = actRemoveShellLinkExecute
+      OnUpdate = actRemoveShellLinkUpdate
     end
   end
 end
