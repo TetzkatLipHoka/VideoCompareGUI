@@ -4,5 +4,5 @@ GUI for the Video-Compare Tool
 https://github.com/pixop/video-compare/
 
 
-![image](https://github.com/user-attachments/assets/b239cdfa-3d1e-4065-bd09-748085b236be)
+![image](https://github.com/user-attachments/assets/caaf12e4-61e1-4525-a3d8-79aad8f10297)
 
