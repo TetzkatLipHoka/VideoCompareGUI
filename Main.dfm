@@ -1,8 +1,8 @@
 object FrmVideoCompare: TFrmVideoCompare
-  Left = 603
-  Top = 307
+  Left = 626
+  Top = 178
   Caption = 'Video Compare'
-  ClientHeight = 543
+  ClientHeight = 621
   ClientWidth = 702
   Color = clBtnFace
   DragMode = dmAutomatic
@@ -22,7 +22,7 @@ object FrmVideoCompare: TFrmVideoCompare
   TextHeight = 13
   object splParams: TSplitter
     Left = 0
-    Top = 498
+    Top = 576
     Width = 702
     Height = 3
     Cursor = crVSplit
@@ -32,20 +32,20 @@ object FrmVideoCompare: TFrmVideoCompare
     Left = 0
     Top = 0
     Width = 702
-    Height = 498
+    Height = 576
     Align = alClient
     TabOrder = 0
     OnResize = pnlTopResize
     object splFile: TSplitter
       Left = 193
       Top = 1
-      Height = 496
+      Height = 574
     end
     object grpFile2: TGroupBox
       Left = 196
       Top = 1
       Width = 187
-      Height = 496
+      Height = 574
       Align = alClient
       Caption = 'File 2'
       TabOrder = 0
@@ -63,7 +63,7 @@ object FrmVideoCompare: TFrmVideoCompare
         Left = 2
         Top = 36
         Width = 183
-        Height = 458
+        Height = 536
         Align = alClient
         ItemHeight = 13
         Mask = 
@@ -79,7 +79,7 @@ object FrmVideoCompare: TFrmVideoCompare
       Left = 1
       Top = 1
       Width = 192
-      Height = 496
+      Height = 574
       Align = alLeft
       Caption = 'File 1'
       TabOrder = 1
@@ -97,7 +97,7 @@ object FrmVideoCompare: TFrmVideoCompare
         Left = 2
         Top = 36
         Width = 188
-        Height = 458
+        Height = 536
         Align = alClient
         ItemHeight = 13
         Mask = 
@@ -113,7 +113,7 @@ object FrmVideoCompare: TFrmVideoCompare
       Left = 383
       Top = 1
       Width = 318
-      Height = 496
+      Height = 574
       ActivePage = tsDefault
       Align = alRight
       TabOrder = 2
@@ -121,11 +121,11 @@ object FrmVideoCompare: TFrmVideoCompare
         Caption = 'Default'
         DesignSize = (
           310
-          468)
+          546)
         object chkHighDPI: TCheckBox
           Left = 187
-          Top = 46
-          Width = 75
+          Top = 44
+          Width = 65
           Height = 17
           Hint = 
             'Allow high DPI mode for e.g. displaying UHD content on Retina di' +
@@ -164,9 +164,9 @@ object FrmVideoCompare: TFrmVideoCompare
           end
         end
         object chk10Bit: TCheckBox
-          Left = 187
-          Top = 63
-          Width = 75
+          Left = 257
+          Top = 44
+          Width = 51
           Height = 17
           Hint = 
             'Increase bit depth to 10 bits per color component (Default=8 Bit' +
@@ -309,7 +309,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object btnLaunch: TButton
           Left = 0
-          Top = 443
+          Top = 521
           Width = 310
           Height = 25
           Action = actLaunch
@@ -318,7 +318,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object chkAutoFilters: TCheckBox
           Left = 187
-          Top = 80
+          Top = 92
           Width = 76
           Height = 17
           Caption = 'Auto Filters'
@@ -331,7 +331,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object grpWheelSensitivity: TGroupBox
           Left = 57
-          Top = 105
+          Top = 110
           Width = 55
           Height = 41
           Hint = 'Mouse wheel sensitivity (Default is 1)'#13#10
@@ -357,7 +357,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object grpShift: TGroupBox
           Left = 1
-          Top = 105
+          Top = 110
           Width = 55
           Height = 41
           Hint = 
@@ -385,7 +385,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object grpToneMapMode: TGroupBox
           Left = 114
-          Top = 105
+          Top = 110
           Width = 95
           Height = 41
           Caption = 'Tone-Map Mode'
@@ -413,7 +413,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object grpPeakNits: TGroupBox
           Left = 210
-          Top = 105
+          Top = 110
           Width = 100
           Height = 41
           Hint = 'Video peak luminance in nits (Default=100)'
@@ -452,7 +452,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object grpBoostTone: TGroupBox
           Left = 1
-          Top = 145
+          Top = 150
           Width = 71
           Height = 41
           Hint = 'Tone-mapping strength multiplicatior (Default=1)'
@@ -478,7 +478,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object btnCreateShellLink: TButton
           Left = 1
-          Top = 188
+          Top = 193
           Width = 154
           Height = 25
           Action = actCreateShellLink
@@ -486,204 +486,375 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object btnRemoveShellLink: TButton
           Left = 157
-          Top = 188
+          Top = 193
           Width = 154
           Height = 25
           Action = actRemoveShellLink
           TabOrder = 16
         end
+        object chkFastAlignment: TCheckBox
+          Left = 187
+          Top = 59
+          Width = 93
+          Height = 17
+          Hint = 
+            'Faster bilinear scaling for aligning input source resolutions, r' +
+            'eplacing higher-quality bicubic interpolation when resolutions d' +
+            'iffer'
+          Caption = 'Fast Alignment'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 17
+          OnClick = OnChange
+        end
+        object chkBilinearTexture: TCheckBox
+          Left = 187
+          Top = 75
+          Width = 96
+          Height = 17
+          Hint = 
+            'Bilinear video texture interpolation, replacing nearest-neighbor' +
+            ' filtering'
+          Caption = 'Bilinear Texture'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 18
+          OnClick = OnChange
+        end
       end
       object tsAdvanced: TTabSheet
         Caption = 'Advanced'
         ImageIndex = 2
-        object grpFilter: TGroupBox
+        object grplibvmafFilterOptions: TGroupBox
           Left = 0
-          Top = 0
+          Top = 504
           Width = 310
-          Height = 63
+          Height = 41
           Align = alTop
-          Caption = 'Filter'
+          Caption = 'libvmaf Filter Options'
           TabOrder = 0
           DesignSize = (
             310
-            63)
-          object lblFilterLeft: TLabel
+            41)
+          object edtlibvmafFilterOptions: TEdit
             Left = 4
-            Top = 21
-            Width = 19
-            Height = 13
-            Caption = 'Left'
-          end
-          object lblFilterRight: TLabel
-            Left = 4
-            Top = 41
-            Width = 25
-            Height = 13
-            Caption = 'Right'
-          end
-          object edtFilterLeft: TEdit
-            Left = 32
             Top = 16
-            Width = 275
+            Width = 302
             Height = 21
             Anchors = [akLeft, akTop, akRight]
             TabOrder = 0
             OnChange = OnChange
           end
-          object edtFilterRight: TEdit
+        end
+        object grpFilter: TGroupBox
+          Left = 0
+          Top = 0
+          Width = 310
+          Height = 85
+          Hint = 
+            'Specify a comma-separated list of FFmpeg filters (e.g. scale=192' +
+            '0:-2,delogo=x=10:y=10:w=100:h=70)'
+          Align = alTop
+          Caption = 'Filter'
+          TabOrder = 1
+          DesignSize = (
+            310
+            85)
+          object edtFilterBoth: TLabeledEdit
+            Left = 32
+            Top = 16
+            Width = 275
+            Height = 21
+            Anchors = [akLeft, akTop, akRight]
+            EditLabel.Width = 22
+            EditLabel.Height = 13
+            EditLabel.Caption = 'Both'
+            LabelPosition = lpLeft
+            TabOrder = 2
+            OnChange = OnChange
+          end
+          object edtFilterLeft: TLabeledEdit
             Left = 32
             Top = 38
             Width = 275
             Height = 21
             Anchors = [akLeft, akTop, akRight]
+            EditLabel.Width = 19
+            EditLabel.Height = 13
+            EditLabel.Caption = 'Left'
+            LabelPosition = lpLeft
+            TabOrder = 0
+            OnChange = OnChange
+          end
+          object edtFilterRight: TLabeledEdit
+            Left = 32
+            Top = 60
+            Width = 275
+            Height = 21
+            Anchors = [akLeft, akTop, akRight]
+            EditLabel.Width = 25
+            EditLabel.Height = 13
+            EditLabel.Caption = 'Right'
+            LabelPosition = lpLeft
             TabOrder = 1
             OnChange = OnChange
           end
         end
         object grpDecoder: TGroupBox
           Left = 0
-          Top = 126
+          Top = 170
           Width = 310
-          Height = 63
+          Height = 85
+          Hint = 
+            'FFmpeg video decoder name, specified as [type?][:options?] (e.g.' +
+            ' '#39':strict=unofficial'#39', '#39':strict=-2'#39' or '#39'vvc:strict=experimental'#39 +
+            ')'
           Align = alTop
           Caption = 'Decoder'
-          TabOrder = 1
+          TabOrder = 2
           DesignSize = (
             310
-            63)
-          object lblDecoderLeft: TLabel
-            Left = 4
-            Top = 21
-            Width = 19
-            Height = 13
-            Caption = 'Left'
-          end
-          object lblDecoderRight: TLabel
-            Left = 4
-            Top = 41
-            Width = 25
-            Height = 13
-            Caption = 'Right'
-          end
-          object edtDecoderLeft: TEdit
+            85)
+          object edtDecoderBoth: TLabeledEdit
             Left = 32
             Top = 16
             Width = 275
             Height = 21
             Anchors = [akLeft, akTop, akRight]
-            TabOrder = 0
+            EditLabel.Width = 22
+            EditLabel.Height = 13
+            EditLabel.Caption = 'Both'
+            LabelPosition = lpLeft
+            TabOrder = 2
             OnChange = OnChange
           end
-          object edtDecoderRight: TEdit
+          object edtDecoderLeft: TLabeledEdit
             Left = 32
             Top = 38
             Width = 275
             Height = 21
             Anchors = [akLeft, akTop, akRight]
+            EditLabel.Width = 19
+            EditLabel.Height = 13
+            EditLabel.Caption = 'Left'
+            LabelPosition = lpLeft
+            TabOrder = 0
+            OnChange = OnChange
+          end
+          object edtDecoderRight: TLabeledEdit
+            Left = 32
+            Top = 60
+            Width = 275
+            Height = 21
+            Anchors = [akLeft, akTop, akRight]
+            EditLabel.Width = 25
+            EditLabel.Height = 13
+            EditLabel.Caption = 'Right'
+            LabelPosition = lpLeft
             TabOrder = 1
             OnChange = OnChange
           end
         end
         object grpDemuxer: TGroupBox
           Left = 0
-          Top = 63
+          Top = 85
           Width = 310
-          Height = 63
+          Height = 85
+          Hint = 
+            'FFmpeg video demuxer name specified as [type?][:options?] (e.g. ' +
+            #39'rawvideo:pixel_format=rgb24,video_size=320x240,framerate=10'#39')'
           Align = alTop
           Caption = 'Demuxer'
-          TabOrder = 2
+          TabOrder = 3
           DesignSize = (
             310
-            63)
-          object lblDemuxerLeft: TLabel
-            Left = 4
-            Top = 21
-            Width = 19
-            Height = 13
-            Caption = 'Left'
-          end
-          object lblDemuxerRight: TLabel
-            Left = 4
-            Top = 41
-            Width = 25
-            Height = 13
-            Caption = 'Right'
-          end
-          object edtDemuxerLeft: TEdit
+            85)
+          object edtDemuxerBoth: TLabeledEdit
             Left = 32
             Top = 16
             Width = 275
             Height = 21
             Anchors = [akLeft, akTop, akRight]
-            TabOrder = 0
+            EditLabel.Width = 22
+            EditLabel.Height = 13
+            EditLabel.Caption = 'Both'
+            LabelPosition = lpLeft
+            TabOrder = 2
             OnChange = OnChange
           end
-          object edtDemuxerRight: TEdit
+          object edtDemuxerLeft: TLabeledEdit
             Left = 32
             Top = 38
             Width = 275
             Height = 21
             Anchors = [akLeft, akTop, akRight]
+            EditLabel.Width = 19
+            EditLabel.Height = 13
+            EditLabel.Caption = 'Left'
+            LabelPosition = lpLeft
+            TabOrder = 0
+            OnChange = OnChange
+          end
+          object edtDemuxerRight: TLabeledEdit
+            Left = 32
+            Top = 60
+            Width = 275
+            Height = 21
+            Anchors = [akLeft, akTop, akRight]
+            EditLabel.Width = 25
+            EditLabel.Height = 13
+            EditLabel.Caption = 'Right'
+            LabelPosition = lpLeft
             TabOrder = 1
             OnChange = OnChange
           end
         end
         object grpHardwareAcceleration: TGroupBox
           Left = 0
-          Top = 189
+          Top = 255
           Width = 310
-          Height = 63
+          Height = 85
+          Hint = 
+            'FFmpeg video hardware acceleration, specified as [type][:device?' +
+            '[:options?]] (e.g. '#39'videotoolbox'#39' or '#39'vaapi:/dev/dri/renderD128'#39 +
+            ')'
           Align = alTop
           Caption = 'Hardware Acceleration'
-          TabOrder = 3
+          TabOrder = 4
           DesignSize = (
             310
-            63)
-          object lblHardwareAccelerationLeft: TLabel
-            Left = 4
-            Top = 21
-            Width = 19
-            Height = 13
-            Caption = 'Left'
-          end
-          object lblHardwareAccelerationRight: TLabel
-            Left = 4
-            Top = 41
-            Width = 25
-            Height = 13
-            Caption = 'Right'
-          end
-          object edtHardwareAccelerationLeft: TEdit
+            85)
+          object edtHardwareAccelerationBoth: TLabeledEdit
             Left = 32
             Top = 16
             Width = 275
             Height = 21
             Anchors = [akLeft, akTop, akRight]
-            TabOrder = 0
+            EditLabel.Width = 22
+            EditLabel.Height = 13
+            EditLabel.Caption = 'Both'
+            LabelPosition = lpLeft
+            TabOrder = 2
             OnChange = OnChange
           end
-          object edtHardwareAccelerationRight: TEdit
+          object edtHardwareAccelerationLeft: TLabeledEdit
             Left = 32
             Top = 38
             Width = 275
             Height = 21
             Anchors = [akLeft, akTop, akRight]
+            EditLabel.Width = 19
+            EditLabel.Height = 13
+            EditLabel.Caption = 'Left'
+            LabelPosition = lpLeft
+            TabOrder = 0
+            OnChange = OnChange
+          end
+          object edtHardwareAccelerationRight: TLabeledEdit
+            Left = 32
+            Top = 60
+            Width = 275
+            Height = 21
+            Anchors = [akLeft, akTop, akRight]
+            EditLabel.Width = 25
+            EditLabel.Height = 13
+            EditLabel.Caption = 'Right'
+            LabelPosition = lpLeft
             TabOrder = 1
             OnChange = OnChange
           end
         end
-        object grplibvmafFilterOptions: TGroupBox
+        object grpColorSpace: TGroupBox
           Left = 0
-          Top = 252
+          Top = 340
           Width = 310
           Height = 41
+          Hint = 
+            'Color space matrix, specified as [matrix] for the same on both s' +
+            'ides, or [l-matrix?]:[r-matrix?] for different values (e.g. '#39'bt7' +
+            '09'#39' or '#39'bt2020nc:'#39')'
           Align = alTop
-          Caption = 'libvmaf Filter Options'
-          TabOrder = 4
+          Caption = 'Color Space'
+          TabOrder = 5
           DesignSize = (
             310
             41)
-          object edtlibvmafFilterOptions: TEdit
+          object edtColorSpace: TEdit
+            Left = 4
+            Top = 16
+            Width = 302
+            Height = 21
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 0
+            OnChange = OnChange
+          end
+        end
+        object grpColorRange: TGroupBox
+          Left = 0
+          Top = 381
+          Width = 310
+          Height = 41
+          Hint = 
+            'Color range specified as [range] for the same on both sides, or ' +
+            '[l-range?]:[r-range?] for different values (e.g. '#39'tv'#39', '#39':pc'#39' or ' +
+            #39'pc:tv'#39')'
+          Align = alTop
+          Caption = 'Color Range'
+          TabOrder = 6
+          DesignSize = (
+            310
+            41)
+          object edtColorRange: TEdit
+            Left = 4
+            Top = 16
+            Width = 302
+            Height = 21
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 0
+            OnChange = OnChange
+          end
+        end
+        object grpColorPrimaries: TGroupBox
+          Left = 0
+          Top = 422
+          Width = 310
+          Height = 41
+          Hint = 
+            'Color primaries specified as [primaries] for the same on both si' +
+            'des, or [l-primaries?]:[r-primaries?] for different values (e.g.' +
+            ' '#39'bt709'#39' or '#39'bt2020:bt709'#39')'
+          Align = alTop
+          Caption = 'Color Primaries'
+          TabOrder = 7
+          DesignSize = (
+            310
+            41)
+          object edtColorPrimaries: TEdit
+            Left = 4
+            Top = 16
+            Width = 302
+            Height = 21
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 0
+            OnChange = OnChange
+          end
+        end
+        object grpColorTRC: TGroupBox
+          Left = 0
+          Top = 463
+          Width = 310
+          Height = 41
+          Hint = 
+            'Transfer characteristics (transfer curve), specified as [trc] fo' +
+            'r the same on both sides, or [l-trc?]:[r-trc?] for different val' +
+            'ues (e.g. '#39'bt709'#39' or '#39'smpte2084:'#39')'
+          Align = alTop
+          Caption = 'Color TRC'
+          TabOrder = 8
+          DesignSize = (
+            310
+            41)
+          object edtColorTRC: TEdit
             Left = 4
             Top = 16
             Width = 302
@@ -701,7 +872,7 @@ object FrmVideoCompare: TFrmVideoCompare
           Left = 0
           Top = 0
           Width = 310
-          Height = 468
+          Height = 546
           Align = alClient
           Caption = 
             '- H: Toggle on-screen help text for controls'#13#10'- Space: Toggle pl' +
@@ -733,7 +904,7 @@ object FrmVideoCompare: TFrmVideoCompare
   end
   object mmoParams: TMemo
     Left = 0
-    Top = 501
+    Top = 579
     Width = 702
     Height = 42
     Align = alBottom

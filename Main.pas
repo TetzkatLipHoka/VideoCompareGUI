@@ -54,32 +54,38 @@ type
     grpBoostTone: TGroupBox;
     edtBoostTone: TEdit;
     tsAdvanced: TTabSheet;
-    grpFilter: TGroupBox;
-    lblFilterLeft: TLabel;
-    lblFilterRight: TLabel;
-    edtFilterLeft: TEdit;
-    edtFilterRight: TEdit;
-    grpDecoder: TGroupBox;
-    lblDecoderLeft: TLabel;
-    lblDecoderRight: TLabel;
-    edtDecoderLeft: TEdit;
-    edtDecoderRight: TEdit;
-    grpDemuxer: TGroupBox;
-    lblDemuxerLeft: TLabel;
-    lblDemuxerRight: TLabel;
-    edtDemuxerLeft: TEdit;
-    edtDemuxerRight: TEdit;
-    grpHardwareAcceleration: TGroupBox;
-    lblHardwareAccelerationLeft: TLabel;
-    lblHardwareAccelerationRight: TLabel;
-    edtHardwareAccelerationLeft: TEdit;
-    edtHardwareAccelerationRight: TEdit;
     grplibvmafFilterOptions: TGroupBox;
     edtlibvmafFilterOptions: TEdit;
     btnCreateShellLink: TButton;
     actCreateShellLink: TAction;
     actRemoveShellLink: TAction;
     btnRemoveShellLink: TButton;
+    chkFastAlignment: TCheckBox;
+    chkBilinearTexture: TCheckBox;
+    grpFilter: TGroupBox;
+    edtFilterBoth: TLabeledEdit;
+    edtFilterLeft: TLabeledEdit;
+    edtFilterRight: TLabeledEdit;
+    grpDecoder: TGroupBox;
+    edtDecoderBoth: TLabeledEdit;
+    edtDecoderLeft: TLabeledEdit;
+    edtDecoderRight: TLabeledEdit;
+    grpDemuxer: TGroupBox;
+    edtDemuxerBoth: TLabeledEdit;
+    edtDemuxerLeft: TLabeledEdit;
+    edtDemuxerRight: TLabeledEdit;
+    grpHardwareAcceleration: TGroupBox;
+    edtHardwareAccelerationBoth: TLabeledEdit;
+    edtHardwareAccelerationLeft: TLabeledEdit;
+    edtHardwareAccelerationRight: TLabeledEdit;
+    grpColorSpace: TGroupBox;
+    edtColorSpace: TEdit;
+    grpColorRange: TGroupBox;
+    edtColorRange: TEdit;
+    grpColorPrimaries: TGroupBox;
+    edtColorPrimaries: TEdit;
+    grpColorTRC: TGroupBox;
+    edtColorTRC: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure OnChange(Sender: TObject);
@@ -236,6 +242,22 @@ end;
 
 procedure TFrmVideoCompare.OnChange(Sender: TObject);
 begin
+  edtFilterLeft.Enabled  := ( edtFilterBoth.Text = '' );
+  edtFilterRight.Enabled := edtFilterLeft.Enabled;
+  edtFilterBoth.Enabled := ( edtFilterLeft.Text = '' ) AND ( edtFilterRight.Text = '' );
+
+  edtDemuxerLeft.Enabled  := ( edtDemuxerBoth.Text = '' );
+  edtDemuxerRight.Enabled := edtDemuxerLeft.Enabled;
+  edtDemuxerBoth.Enabled := ( edtDemuxerLeft.Text = '' ) AND ( edtDemuxerRight.Text = '' );
+
+  edtDecoderLeft.Enabled  := ( edtDecoderBoth.Text = '' );
+  edtDecoderRight.Enabled := edtDecoderLeft.Enabled;
+  edtDecoderBoth.Enabled := ( edtDecoderLeft.Text = '' ) AND ( edtDecoderRight.Text = '' );
+
+  edtHardwareAccelerationLeft.Enabled  := ( edtHardwareAccelerationBoth.Text = '' );
+  edtHardwareAccelerationRight.Enabled := edtHardwareAccelerationLeft.Enabled;
+  edtHardwareAccelerationBoth.Enabled := ( edtHardwareAccelerationLeft.Text = '' ) AND ( edtHardwareAccelerationRight.Text = '' );
+
   fParams := CreateParameters;
   mmoParams.Text := fParams;
 end;
@@ -289,6 +311,8 @@ begin
 
   chkHighDPI.Checked                := Ini.ReadBool( PARAMETER_SECTION, 'High DPI', False );
   chk10Bit.Checked                  := Ini.ReadBool( PARAMETER_SECTION, '10 Bit', False );
+  chkFastAlignment.Checked          := Ini.ReadBool( PARAMETER_SECTION, 'Fast Alignment', False );
+  chkBilinearTexture.Checked        := Ini.ReadBool( PARAMETER_SECTION, 'Bilinear Texture', False );
   cbbDisplay.ItemIndex              := Ini.ReadInteger( PARAMETER_SECTION, 'Display', 0 );
   cbbMode.ItemIndex                 := Ini.ReadInteger( PARAMETER_SECTION, 'Mode', 0 );
   rgWindow.ItemIndex                := Ini.ReadInteger( PARAMETER_SECTION, 'Window Mode', 0 );
@@ -302,14 +326,22 @@ begin
   edtPeakNitsLeft.Text              := IntToStr( Ini.ReadInteger( PARAMETER_SECTION, 'Peak Nits (Left)', DEFAULT_PEAK_NITS ) );
   edtPeakNitsRight.Text             := IntToStr( Ini.ReadInteger( PARAMETER_SECTION, 'Peak Nits (Right)', DEFAULT_PEAK_NITS ) );
   edtBoostTone.Text                 := FloatToStr( Ini.ReadFloat( PARAMETER_SECTION, 'Boost Tone', DEFAULT_BOOST_TONE ) );
+  edtFilterBoth.Text                := Ini.ReadString( PARAMETER_SECTION, 'Filter (Both)', '' );
   edtFilterLeft.Text                := Ini.ReadString( PARAMETER_SECTION, 'Filter (Left)', '' );
   edtFilterRight.Text               := Ini.ReadString( PARAMETER_SECTION, 'Filter (Right)', '' );
+  edtDemuxerBoth.Text               := Ini.ReadString( PARAMETER_SECTION, 'Demuxer (Both)', '' );
   edtDemuxerLeft.Text               := Ini.ReadString( PARAMETER_SECTION, 'Demuxer (Left)', '' );
   edtDemuxerRight.Text              := Ini.ReadString( PARAMETER_SECTION, 'Demuxer (Right)', '' );
+  edtDecoderBoth.Text               := Ini.ReadString( PARAMETER_SECTION, 'Decoder (Both)', '' );
   edtDecoderLeft.Text               := Ini.ReadString( PARAMETER_SECTION, 'Decoder (Left)', '' );
   edtDecoderRight.Text              := Ini.ReadString( PARAMETER_SECTION, 'Decoder (Right)', '' );
+  edtHardwareAccelerationBoth.Text  := Ini.ReadString( PARAMETER_SECTION, 'Hardware Acceleration (Both)', '' );  
   edtHardwareAccelerationLeft.Text  := Ini.ReadString( PARAMETER_SECTION, 'Hardware Acceleration (Left)', '' );
   edtHardwareAccelerationRight.Text := Ini.ReadString( PARAMETER_SECTION, 'Hardware Acceleration (Right)', '' );
+  edtColorSpace.Text                := Ini.ReadString( PARAMETER_SECTION, 'Color Space', '' );
+  edtColorRange.Text                := Ini.ReadString( PARAMETER_SECTION, 'Color Range', '' );
+  edtColorPrimaries.Text            := Ini.ReadString( PARAMETER_SECTION, 'Color Primaries', '' );
+  edtColorTRC.Text                  := Ini.ReadString( PARAMETER_SECTION, 'Color TRC', '' );
   edtlibvmafFilterOptions.Text      := Ini.ReadString( PARAMETER_SECTION, 'libvmaf Filter Options', '' );
   chkAutoFilters.Checked            := Ini.ReadBool( PARAMETER_SECTION, 'Auto Filters', True );
 
@@ -335,6 +367,8 @@ begin
 
   Ini.WriteBool( PARAMETER_SECTION, 'High DPI', chkHighDPI.Checked );
   Ini.WriteBool( PARAMETER_SECTION, '10 Bit', chk10Bit.Checked );
+  Ini.WriteBool( PARAMETER_SECTION, 'Fast Alignment', chkFastAlignment.Checked );
+  Ini.WriteBool( PARAMETER_SECTION, 'Bilinear Texture', chkBilinearTexture.Checked );
   Ini.WriteInteger( PARAMETER_SECTION, 'Display', cbbDisplay.ItemIndex );
   Ini.WriteInteger( PARAMETER_SECTION, 'Mode', cbbMode.ItemIndex );
 
@@ -349,14 +383,22 @@ begin
   Ini.WriteInteger( PARAMETER_SECTION, 'Peak Nits (Left)', StrToIntDef( edtPeakNitsLeft.Text, DEFAULT_PEAK_NITS ) );
   Ini.WriteInteger( PARAMETER_SECTION, 'Peak Nits (Right)', StrToIntDef( edtPeakNitsRight.Text, DEFAULT_PEAK_NITS ) );
   Ini.WriteFloat( PARAMETER_SECTION, 'Boost Tone', StrToFloatDef( edtBoostTone.Text, DEFAULT_BOOST_TONE ) );
+  Ini.WriteString( PARAMETER_SECTION, 'Filter (Both)', edtFilterBoth.Text );
   Ini.WriteString( PARAMETER_SECTION, 'Filter (Left)', edtFilterLeft.Text );
   Ini.WriteString( PARAMETER_SECTION, 'Filter (Right)', edtFilterRight.Text );
+  Ini.WriteString( PARAMETER_SECTION, 'Demuxer (Both)', edtDemuxerBoth.Text );
   Ini.WriteString( PARAMETER_SECTION, 'Demuxer (Left)', edtDemuxerLeft.Text );
   Ini.WriteString( PARAMETER_SECTION, 'Demuxer (Right)', edtDemuxerRight.Text );
+  Ini.WriteString( PARAMETER_SECTION, 'Decoder (Both)', edtDecoderBoth.Text );
   Ini.WriteString( PARAMETER_SECTION, 'Decoder (Left)', edtDecoderLeft.Text );
   Ini.WriteString( PARAMETER_SECTION, 'Decoder (Right)', edtDecoderRight.Text );
+  Ini.WriteString( PARAMETER_SECTION, 'Hardware Acceleration (Both)', edtHardwareAccelerationBoth.Text );
   Ini.WriteString( PARAMETER_SECTION, 'Hardware Acceleration (Left)', edtHardwareAccelerationLeft.Text );
   Ini.WriteString( PARAMETER_SECTION, 'Hardware Acceleration (Right)', edtHardwareAccelerationRight.Text );
+  Ini.WriteString( PARAMETER_SECTION, 'Color Space', edtColorSpace.Text );
+  Ini.WriteString( PARAMETER_SECTION, 'Color Range', edtColorRange.Text );
+  Ini.WriteString( PARAMETER_SECTION, 'Color Primaries', edtColorPrimaries.Text );
+  Ini.WriteString( PARAMETER_SECTION, 'Color TRC', edtColorTRC.Text );
   Ini.WriteString( PARAMETER_SECTION, 'libvmaf Filter Options', edtlibvmafFilterOptions.Text );
   Ini.WriteBool( PARAMETER_SECTION, 'Auto Filters', chkAutoFilters.Checked );
 
@@ -477,6 +519,12 @@ begin
   if chk10Bit.Checked then
     result := result + '--10-bpc ';
 
+  if chkFastAlignment.Checked then
+    result := result + '--fast-alignment ';
+
+  if chkBilinearTexture.Checked then
+    result := result + '--bilinear-texture ';
+
   if ( cbbDisplay.ItemIndex > 0 ) then
     result := result + Format( '--display-number %d ', [ cbbDisplay.ItemIndex ] );
 
@@ -525,25 +573,57 @@ begin
     2 : result := result + '--tone-map-mode rel ';
   end;
 
-  if ( edtFilterLeft.Text <> '' ) then
-    result := result + '--left-filters ' + edtFilterLeft.Text + ' ';
-  if ( edtFilterRight.Text <> '' ) then
-    result := result + '--right-filters ' + edtFilterRight.Text + ' ';
+  if ( edtFilterBoth.Text <> '' ) then
+    result := result + '--filters ' + edtFilterBoth.Text + ' '
+  else
+    begin
+    if ( edtFilterLeft.Text <> '' ) then
+      result := result + '--left-filters ' + edtFilterLeft.Text + ' ';
+    if ( edtFilterRight.Text <> '' ) then
+      result := result + '--right-filters ' + edtFilterRight.Text + ' ';
+    end;   
+    
+  if ( edtDemuxerBoth.Text <> '' ) then
+    result := result + '--demuxer ' + edtDemuxerBoth.Text + ' '
+  else
+    begin
+    if ( edtDemuxerLeft.Text <> '' ) then
+      result := result + '--left-demuxer ' + edtDemuxerLeft.Text + ' ';
+    if ( edtDemuxerRight.Text <> '' ) then
+      result := result + '--right-demuxer ' + edtDemuxerRight.Text + ' ';
+    end;
+    
+  if ( edtDecoderBoth.Text <> '' ) then
+    result := result + '--decoder ' + edtDecoderBoth.Text + ' '
+  else
+    begin
+    if ( edtDecoderLeft.Text <> '' ) then
+      result := result + '--left-decoder ' + edtDecoderLeft.Text + ' ';
+    if ( edtDecoderRight.Text <> '' ) then
+      result := result + '--right-decoder ' + edtDecoderRight.Text + ' ';
+    end;  
+    
+  if ( edtHardwareAccelerationBoth.Text <> '' ) then
+    result := result + '--hwaccel ' + edtHardwareAccelerationBoth.Text + ' '
+  else
+    begin
+    if ( edtHardwareAccelerationLeft.Text <> '' ) then
+      result := result + '--left-hwaccel ' + edtHardwareAccelerationLeft.Text + ' ';
+    if ( edtHardwareAccelerationRight.Text <> '' ) then
+      result := result + '--right-hwaccel ' + edtHardwareAccelerationRight.Text + ' ';
+    end;
 
-  if ( edtDemuxerLeft.Text <> '' ) then
-    result := result + '--left-demuxer ' + edtDemuxerLeft.Text + ' ';
-  if ( edtDemuxerRight.Text <> '' ) then
-    result := result + '--right-demuxer ' + edtDemuxerRight.Text + ' ';
+  if ( edtColorSpace.Text <> '' ) then
+    result := result + '--color-space ' + edtColorSpace.Text + ' ';
 
-  if ( edtDecoderLeft.Text <> '' ) then
-    result := result + '--left-decoder ' + edtDecoderLeft.Text + ' ';
-  if ( edtDecoderRight.Text <> '' ) then
-    result := result + '--right-decoder ' + edtDecoderRight.Text + ' ';
+  if ( edtColorRange.Text <> '' ) then
+    result := result + '--color-range ' + edtColorRange.Text + ' ';
 
-  if ( edtHardwareAccelerationLeft.Text <> '' ) then
-    result := result + '--left-hwaccel ' + edtHardwareAccelerationLeft.Text + ' ';
-  if ( edtHardwareAccelerationRight.Text <> '' ) then
-    result := result + '--right-hwaccel ' + edtHardwareAccelerationRight.Text + ' ';
+  if ( edtColorPrimaries.Text <> '' ) then
+    result := result + '--color-primaries ' + edtColorPrimaries.Text + ' ';
+
+  if ( edtColorTRC.Text <> '' ) then
+    result := result + '--color-trc ' + edtColorTRC.Text + ' ';
 
   if ( edtlibvmafFilterOptions.Text <> '' ) then
     result := result + '--libvmaf-options ' + edtlibvmafFilterOptions.Text + ' ';
