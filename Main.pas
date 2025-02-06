@@ -277,8 +277,12 @@ end;
 
 procedure TFrmVideoCompare.cbbToneMapModeLeftClick(Sender: TObject);
 begin
-  SetEnabledForControls( grpPeakNits, TComboBox( Sender ).ItemIndex = 1 );
-  SetEnabledForControls( grpBoostTone, TComboBox( Sender ).ItemIndex = 1 );
+  edtPeakNitsLeft.Enabled := ( cbbToneMapModeLeft.ItemIndex = 1 );
+  edtPeakNitsRight.Enabled := ( cbbToneMapModeRight.ItemIndex = 1 );
+
+  edtBoostToneLeft.Enabled := ( cbbToneMapModeLeft.ItemIndex = 1 );
+  edtBoostToneRight.Enabled := ( cbbToneMapModeRight.ItemIndex = 1 );
+
   OnChange( Sender );
 end;
 

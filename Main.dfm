@@ -441,6 +441,7 @@ object FrmVideoCompare: TFrmVideoCompare
             Top = 16
             Width = 46
             Height = 21
+            Enabled = False
             ParentShowHint = False
             ShowHint = True
             TabOrder = 0
@@ -455,6 +456,7 @@ object FrmVideoCompare: TFrmVideoCompare
             Width = 46
             Height = 21
             Anchors = [akLeft, akTop, akRight]
+            Enabled = False
             ParentShowHint = False
             ShowHint = True
             TabOrder = 1
@@ -480,6 +482,7 @@ object FrmVideoCompare: TFrmVideoCompare
             Top = 18
             Width = 65
             Height = 21
+            Enabled = False
             ParentShowHint = False
             ShowHint = True
             TabOrder = 0
@@ -494,6 +497,7 @@ object FrmVideoCompare: TFrmVideoCompare
             Width = 65
             Height = 21
             Anchors = [akLeft, akTop, akRight]
+            Enabled = False
             ParentShowHint = False
             ShowHint = True
             TabOrder = 1
