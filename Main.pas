@@ -44,7 +44,7 @@ type
     grpShift: TGroupBox;
     edtShift: TEdit;
     grpToneMapMode: TGroupBox;
-    cbbToneMapMode: TComboBox;
+    cbbToneMapModeLeft: TComboBox;
     pnlTop: TPanel;
     mmoParams: TMemo;
     splParams: TSplitter;
@@ -52,7 +52,6 @@ type
     edtPeakNitsLeft: TEdit;
     edtPeakNitsRight: TEdit;
     grpBoostTone: TGroupBox;
-    edtBoostTone: TEdit;
     tsAdvanced: TTabSheet;
     grplibvmafFilterOptions: TGroupBox;
     edtlibvmafFilterOptions: TEdit;
@@ -86,6 +85,9 @@ type
     edtColorPrimaries: TEdit;
     grpColorTRC: TGroupBox;
     edtColorTRC: TEdit;
+    cbbToneMapModeRight: TComboBox;
+    edtBoostToneLeft: TEdit;
+    edtBoostToneRight: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure OnChange(Sender: TObject);
@@ -94,7 +96,7 @@ type
     procedure actLaunchUpdate(Sender: TObject);
     procedure actLaunchExecute(Sender: TObject);
     procedure rgWindowClick(Sender: TObject);
-    procedure cbbToneMapModeClick(Sender: TObject);    
+    procedure cbbToneMapModeLeftClick(Sender: TObject);
     procedure edtWidthKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure edtHeightKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure BlockKeyPress(Sender: TObject; var Key: Char);
@@ -273,10 +275,10 @@ begin
   OnChange( Sender );
 end;
 
-procedure TFrmVideoCompare.cbbToneMapModeClick(Sender: TObject);
+procedure TFrmVideoCompare.cbbToneMapModeLeftClick(Sender: TObject);
 begin
-  SetEnabledForControls( grpPeakNits, TComboBox( Sender ).ItemIndex = 0 );
-  SetEnabledForControls( grpBoostTone, TComboBox( Sender ).ItemIndex = 0 );
+  SetEnabledForControls( grpPeakNits, TComboBox( Sender ).ItemIndex = 1 );
+  SetEnabledForControls( grpBoostTone, TComboBox( Sender ).ItemIndex = 1 );
   OnChange( Sender );
 end;
 
@@ -322,10 +324,12 @@ begin
   edtFrameBufferSize.Text           := IntToStr( Ini.ReadInteger( PARAMETER_SECTION, 'Frame Buffer Size', DEFAULT_BUFFER_SIZE ) );
 //  edtShift.Text                     := FloatToStr( Ini.ReadFloat( PARAMETER_SECTION, 'Shift', 0 ) );
   edtWheelSensitivity.Text          := FloatToStr( Ini.ReadFloat( PARAMETER_SECTION, 'Wheel Sensitivity', DEFAULT_WHEEL_INTERNAL ) );
-  cbbToneMapMode.ItemIndex          := Ini.ReadInteger( PARAMETER_SECTION, 'ToneMap Mode', 0 );
+  cbbToneMapModeLeft.ItemIndex      := Ini.ReadInteger( PARAMETER_SECTION, 'ToneMap Mode (Left)', 0 );
+  cbbToneMapModeRight.ItemIndex     := Ini.ReadInteger( PARAMETER_SECTION, 'ToneMap Mode (Right)', 0 );
   edtPeakNitsLeft.Text              := IntToStr( Ini.ReadInteger( PARAMETER_SECTION, 'Peak Nits (Left)', DEFAULT_PEAK_NITS ) );
   edtPeakNitsRight.Text             := IntToStr( Ini.ReadInteger( PARAMETER_SECTION, 'Peak Nits (Right)', DEFAULT_PEAK_NITS ) );
-  edtBoostTone.Text                 := FloatToStr( Ini.ReadFloat( PARAMETER_SECTION, 'Boost Tone', DEFAULT_BOOST_TONE ) );
+  edtBoostToneLeft.Text             := FloatToStr( Ini.ReadFloat( PARAMETER_SECTION, 'Boost Tone (Left)', DEFAULT_BOOST_TONE ) );
+  edtBoostToneRight.Text            := FloatToStr( Ini.ReadFloat( PARAMETER_SECTION, 'Boost Tone (Right)', DEFAULT_BOOST_TONE ) );
   edtFilterBoth.Text                := Ini.ReadString( PARAMETER_SECTION, 'Filter (Both)', '' );
   edtFilterLeft.Text                := Ini.ReadString( PARAMETER_SECTION, 'Filter (Left)', '' );
   edtFilterRight.Text               := Ini.ReadString( PARAMETER_SECTION, 'Filter (Right)', '' );
@@ -379,10 +383,12 @@ begin
   Ini.WriteInteger( PARAMETER_SECTION, 'Frame Buffer Size', StrToIntDef( edtFrameBufferSize.Text, DEFAULT_BUFFER_SIZE ) );
 //  Ini.WriteFloat( PARAMETER_SECTION, 'Shift', StrToFloatDef( edtShift.Text, 0 ) );
   Ini.WriteFloat( PARAMETER_SECTION, 'Wheel Sensitivity', StrToFloatDef( edtWheelSensitivity.Text, DEFAULT_WHEEL_INTERNAL ) );
-  Ini.WriteInteger( PARAMETER_SECTION, 'ToneMap Mode', cbbToneMapMode.ItemIndex );
+  Ini.WriteInteger( PARAMETER_SECTION, 'ToneMap Mode (Left)', cbbToneMapModeLeft.ItemIndex );
+  Ini.WriteInteger( PARAMETER_SECTION, 'ToneMap Mode (Right)', cbbToneMapModeRight.ItemIndex );
   Ini.WriteInteger( PARAMETER_SECTION, 'Peak Nits (Left)', StrToIntDef( edtPeakNitsLeft.Text, DEFAULT_PEAK_NITS ) );
   Ini.WriteInteger( PARAMETER_SECTION, 'Peak Nits (Right)', StrToIntDef( edtPeakNitsRight.Text, DEFAULT_PEAK_NITS ) );
-  Ini.WriteFloat( PARAMETER_SECTION, 'Boost Tone', StrToFloatDef( edtBoostTone.Text, DEFAULT_BOOST_TONE ) );
+  Ini.WriteFloat( PARAMETER_SECTION, 'Boost Tone (Left)', StrToFloatDef( edtBoostToneLeft.Text, DEFAULT_BOOST_TONE ) );
+  Ini.WriteFloat( PARAMETER_SECTION, 'Boost Tone (Right)', StrToFloatDef( edtBoostToneRight.Text, DEFAULT_BOOST_TONE ) );
   Ini.WriteString( PARAMETER_SECTION, 'Filter (Both)', edtFilterBoth.Text );
   Ini.WriteString( PARAMETER_SECTION, 'Filter (Left)', edtFilterLeft.Text );
   Ini.WriteString( PARAMETER_SECTION, 'Filter (Right)', edtFilterRight.Text );
@@ -507,8 +513,8 @@ end;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 function TFrmVideoCompare.CreateParameters( WithFileName : Boolean = True ) : String;
 var
-  i : Integer;
-  D : Double;
+  i     : Integer;
+  D, D2 : Double;
 begin
   result := '';
   if chkHighDPI.Checked then
@@ -555,23 +561,46 @@ begin
   if ( D <> DEFAULT_WHEEL ) then
     result := result + Format( '--wheel-sensitivity %.3f ', [ D ], fLF );
 
-  case cbbToneMapMode.ItemIndex of
-    0 : begin
-        i := StrToIntDef( edtPeakNitsLeft.Text, DEFAULT_PEAK_NITS );
-        if ( i <> DEFAULT_PEAK_NITS ) then
-          result := result + Format( '--left-peak-nits %d ', [ i ] );
+  if ( cbbToneMapModeLeft.ItemIndex <> 0 ) OR ( cbbToneMapModeRight.ItemIndex <> 0 ) then
+    begin
+    result := result + '--tone-map-mode ';
 
-        i := StrToIntDef( edtPeakNitsRight.Text, DEFAULT_PEAK_NITS );
-        if ( i <> DEFAULT_PEAK_NITS ) then
-          result := result + Format( '--right-peak-nits %d ', [ i ] );
+    case cbbToneMapModeLeft.ItemIndex of
+      0 : result := result + 'auto:';
+      1 : result := result + 'off:';
+      2 : result := result + 'on:';
+      3 : result := result + 'rel:';
+    end;
 
-        D := StrToFloatDef( edtBoostTone.Text, DEFAULT_BOOST_TONE );
-        if ( D <> DEFAULT_BOOST_TONE ) then
-          result := result + Format( '--boost-tone %.2f ', [ D ], fLF );
-        end;
-    1 : result := result + '--tone-map-mode on ';
-    2 : result := result + '--tone-map-mode rel ';
-  end;
+    case cbbToneMapModeRight.ItemIndex of
+      0 : result := result + 'auto';
+      1 : result := result + 'off';
+      2 : result := result + 'on';
+      3 : result := result + 'rel';
+    end;
+    end;
+
+  if ( cbbToneMapModeLeft.ItemIndex = 1 ) then
+    begin
+    i := StrToIntDef( edtPeakNitsLeft.Text, DEFAULT_PEAK_NITS );
+    if ( i <> DEFAULT_PEAK_NITS ) then
+      result := result + Format( '--left-peak-nits %d ', [ i ] );
+    end;
+
+  if ( cbbToneMapModeRight.ItemIndex = 1 ) then
+    begin
+    i := StrToIntDef( edtPeakNitsRight.Text, DEFAULT_PEAK_NITS );
+    if ( i <> DEFAULT_PEAK_NITS ) then
+      result := result + Format( '--right-peak-nits %d ', [ i ] );
+    end;
+
+//  if ( cbbToneMapModeLeft.ItemIndex = 1 ) then
+    begin
+    D := StrToFloatDef( edtBoostToneLeft.Text, DEFAULT_BOOST_TONE );
+    D2 := StrToFloatDef( edtBoostToneRight.Text, DEFAULT_BOOST_TONE );
+    if ( D <> DEFAULT_BOOST_TONE ) OR ( D2 <> DEFAULT_BOOST_TONE ) then
+      result := result + Format( '--boost-tone %.2f:%.2f', [ D, D2 ], fLF );
+    end;
 
   if ( edtFilterBoth.Text <> '' ) then
     result := result + '--filters ' + edtFilterBoth.Text + ' '

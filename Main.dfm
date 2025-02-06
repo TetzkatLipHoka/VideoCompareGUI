@@ -384,36 +384,50 @@ object FrmVideoCompare: TFrmVideoCompare
           end
         end
         object grpToneMapMode: TGroupBox
-          Left = 114
+          Left = 115
           Top = 110
-          Width = 95
+          Width = 190
           Height = 41
           Caption = 'Tone-Map Mode'
           TabOrder = 12
-          DesignSize = (
-            95
-            41)
-          object cbbToneMapMode: TComboBox
+          object cbbToneMapModeLeft: TComboBox
             Left = 3
             Top = 16
             Width = 90
             Height = 21
-            Anchors = [akLeft, akTop, akRight]
             ItemIndex = 0
             TabOrder = 0
-            Text = 'Off'
+            Text = 'Auto'
             OnChange = OnChange
-            OnClick = cbbToneMapModeClick
+            OnClick = cbbToneMapModeLeftClick
             OnKeyPress = BlockKeyPress
             Items.Strings = (
+              'Auto'
+              'Off'
+              'Full Range'
+              'Relative')
+          end
+          object cbbToneMapModeRight: TComboBox
+            Left = 96
+            Top = 16
+            Width = 90
+            Height = 21
+            ItemIndex = 0
+            TabOrder = 1
+            Text = 'Auto'
+            OnChange = OnChange
+            OnClick = cbbToneMapModeLeftClick
+            OnKeyPress = BlockKeyPress
+            Items.Strings = (
+              'Auto'
               'Off'
               'Full Range'
               'Relative')
           end
         end
         object grpPeakNits: TGroupBox
-          Left = 210
-          Top = 110
+          Left = 1
+          Top = 150
           Width = 100
           Height = 41
           Hint = 'Video peak luminance in nits (Default=100)'
@@ -451,25 +465,38 @@ object FrmVideoCompare: TFrmVideoCompare
           end
         end
         object grpBoostTone: TGroupBox
-          Left = 1
+          Left = 104
           Top = 150
-          Width = 71
+          Width = 142
           Height = 41
           Hint = 'Tone-mapping strength multiplicatior (Default=1)'
           Caption = 'Boost Tone'
           TabOrder = 14
           DesignSize = (
-            71
+            142
             41)
-          object edtBoostTone: TEdit
-            Left = 3
-            Top = 16
+          object edtBoostToneLeft: TEdit
+            Left = 5
+            Top = 18
+            Width = 65
+            Height = 21
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 0
+            Text = '1'
+            OnChange = OnChange
+            OnKeyDown = FloatKeyDown
+            OnKeyPress = FloatKeyPress
+          end
+          object edtBoostToneRight: TEdit
+            Left = 73
+            Top = 18
             Width = 65
             Height = 21
             Anchors = [akLeft, akTop, akRight]
             ParentShowHint = False
             ShowHint = True
-            TabOrder = 0
+            TabOrder = 1
             Text = '1'
             OnChange = OnChange
             OnKeyDown = FloatKeyDown
