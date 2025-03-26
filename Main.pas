@@ -577,10 +577,10 @@ begin
     end;
 
     case cbbToneMapModeRight.ItemIndex of
-      0 : result := result + 'auto';
-      1 : result := result + 'off';
-      2 : result := result + 'on';
-      3 : result := result + 'rel';
+      0 : result := result + 'auto ';
+      1 : result := result + 'off ';
+      2 : result := result + 'on ';
+      3 : result := result + 'rel ';
     end;
     end;
 
@@ -603,7 +603,7 @@ begin
     D := StrToFloatDef( edtBoostToneLeft.Text, DEFAULT_BOOST_TONE );
     D2 := StrToFloatDef( edtBoostToneRight.Text, DEFAULT_BOOST_TONE );
     if ( D <> DEFAULT_BOOST_TONE ) OR ( D2 <> DEFAULT_BOOST_TONE ) then
-      result := result + Format( '--boost-tone %.2f:%.2f', [ D, D2 ], fLF );
+      result := result + Format( '--boost-tone %.2f:%.2f ', [ D, D2 ], fLF );
     end;
 
   if ( edtFilterBoth.Text <> '' ) then
