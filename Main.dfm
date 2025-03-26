@@ -124,7 +124,7 @@ object FrmVideoCompare: TFrmVideoCompare
           546)
         object chkHighDPI: TCheckBox
           Left = 187
-          Top = 44
+          Top = 131
           Width = 65
           Height = 17
           Hint = 
@@ -138,7 +138,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object grpMode: TGroupBox
           Left = 81
-          Top = 1
+          Top = 88
           Width = 78
           Height = 41
           Caption = 'Mode'
@@ -165,7 +165,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object chk10Bit: TCheckBox
           Left = 257
-          Top = 44
+          Top = 131
           Width = 51
           Height = 17
           Hint = 
@@ -179,7 +179,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object grpDisplay: TGroupBox
           Left = 1
-          Top = 1
+          Top = 88
           Width = 78
           Height = 41
           Hint = 'Open main window on specific display'
@@ -201,7 +201,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object grpAutoLoopMode: TGroupBox
           Left = 162
-          Top = 1
+          Top = 88
           Width = 78
           Height = 41
           Caption = 'Loop Mode'
@@ -228,7 +228,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object grpFrameBufferSize: TGroupBox
           Left = 242
-          Top = 1
+          Top = 88
           Width = 68
           Height = 41
           Hint = 'Frame buffer size (Default=50)'#13#10
@@ -254,7 +254,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object rgWindow: TRadioGroup
           Left = 1
-          Top = 42
+          Top = 129
           Width = 183
           Height = 62
           Caption = 'Window'
@@ -269,7 +269,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object pnlWindowSize: TPanel
           Left = 70
-          Top = 77
+          Top = 164
           Width = 112
           Height = 25
           BevelOuter = bvNone
@@ -318,7 +318,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object chkAutoFilters: TCheckBox
           Left = 187
-          Top = 92
+          Top = 179
           Width = 76
           Height = 17
           Caption = 'Auto Filters'
@@ -331,7 +331,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object grpWheelSensitivity: TGroupBox
           Left = 57
-          Top = 110
+          Top = 197
           Width = 55
           Height = 41
           Hint = 'Mouse wheel sensitivity (Default is 1)'#13#10
@@ -357,7 +357,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object grpShift: TGroupBox
           Left = 1
-          Top = 110
+          Top = 197
           Width = 55
           Height = 41
           Hint = 
@@ -385,7 +385,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object grpToneMapMode: TGroupBox
           Left = 115
-          Top = 110
+          Top = 197
           Width = 190
           Height = 41
           Caption = 'Tone-Map Mode'
@@ -427,7 +427,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object grpPeakNits: TGroupBox
           Left = 1
-          Top = 150
+          Top = 237
           Width = 100
           Height = 41
           Hint = 'Video peak luminance in nits (Default=100)'
@@ -468,7 +468,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object grpBoostTone: TGroupBox
           Left = 104
-          Top = 150
+          Top = 237
           Width = 142
           Height = 41
           Hint = 'Tone-mapping strength multiplicatior (Default=1)'
@@ -509,7 +509,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object btnCreateShellLink: TButton
           Left = 1
-          Top = 193
+          Top = 280
           Width = 154
           Height = 25
           Action = actCreateShellLink
@@ -517,7 +517,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object btnRemoveShellLink: TButton
           Left = 157
-          Top = 193
+          Top = 280
           Width = 154
           Height = 25
           Action = actRemoveShellLink
@@ -525,7 +525,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object chkFastAlignment: TCheckBox
           Left = 187
-          Top = 59
+          Top = 146
           Width = 93
           Height = 17
           Hint = 
@@ -540,7 +540,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object chkBilinearTexture: TCheckBox
           Left = 187
-          Top = 75
+          Top = 162
           Width = 96
           Height = 17
           Hint = 
@@ -551,6 +551,79 @@ object FrmVideoCompare: TFrmVideoCompare
           ShowHint = True
           TabOrder = 18
           OnClick = OnChange
+        end
+        object grpSelectionMode: TGroupBox
+          Left = 1
+          Top = 0
+          Width = 306
+          Height = 87
+          Anchors = [akLeft, akTop, akRight]
+          Caption = 'Selection Mode'
+          TabOrder = 19
+          object rbSelectionModeDefault: TRadioButton
+            Left = 10
+            Top = 20
+            Width = 59
+            Height = 17
+            Caption = 'Default'
+            Checked = True
+            TabOrder = 0
+            TabStop = True
+            OnClick = rbSelectionModeClick
+          end
+          object rbSelectionModeExtension: TRadioButton
+            Left = 72
+            Top = 20
+            Width = 71
+            Height = 17
+            Caption = 'Extension'
+            TabOrder = 1
+            OnClick = rbSelectionModeClick
+          end
+          object rbSelectionModePrefix: TRadioButton
+            Left = 146
+            Top = 20
+            Width = 52
+            Height = 17
+            Caption = 'Prefix'
+            TabOrder = 2
+            OnClick = rbSelectionModeClick
+          end
+          object rbSelectionModeSuffix: TRadioButton
+            Left = 202
+            Top = 20
+            Width = 53
+            Height = 17
+            Caption = 'Suffix'
+            TabOrder = 3
+            OnClick = rbSelectionModeClick
+          end
+          object rbSelectionModeID: TRadioButton
+            Left = 72
+            Top = 40
+            Width = 35
+            Height = 17
+            Caption = 'ID'
+            TabOrder = 4
+            OnClick = rbSelectionModeClick
+          end
+          object rbSelectionModeName: TRadioButton
+            Left = 10
+            Top = 40
+            Width = 50
+            Height = 17
+            Caption = 'Name'
+            TabOrder = 5
+            OnClick = rbSelectionModeClick
+          end
+          object edtSelectionModeText: TEdit
+            Left = 10
+            Top = 60
+            Width = 293
+            Height = 21
+            TabOrder = 6
+            OnChange = edtSelectionModeTextChange
+          end
         end
       end
       object tsAdvanced: TTabSheet

@@ -88,6 +88,14 @@ type
     cbbToneMapModeRight: TComboBox;
     edtBoostToneLeft: TEdit;
     edtBoostToneRight: TEdit;
+    grpSelectionMode: TGroupBox;
+    rbSelectionModeDefault: TRadioButton;
+    rbSelectionModeExtension: TRadioButton;
+    rbSelectionModePrefix: TRadioButton;
+    rbSelectionModeSuffix: TRadioButton;
+    rbSelectionModeID: TRadioButton;
+    rbSelectionModeName: TRadioButton;
+    edtSelectionModeText: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure OnChange(Sender: TObject);
@@ -110,11 +118,19 @@ type
     procedure actCreateShellLinkExecute(Sender: TObject);
     procedure actRemoveShellLinkUpdate(Sender: TObject);
     procedure actRemoveShellLinkExecute(Sender: TObject);
+    procedure rbSelectionModeClick(Sender: TObject);
+    procedure edtSelectionModeTextChange(Sender: TObject);
   private
     { Private-Deklarationen }
     fLF : TFormatSettings;
+    fSelectionMode : Integer;
     fParams : String;
     procedure WMDROPFILES(var Msg: TMessage); message WM_DROPFILES;
+
+    function  GetSelectionMode( RadioButton : TObject ) : Integer;// overload;
+    //function  GetSelectionMode : Integer; overload;
+    procedure SetSelectionMode( ID : Integer );
+    procedure UpdateSelection;
   protected
     procedure CreateWnd; override;
     procedure DestroyWindowHandle; override;
@@ -123,6 +139,7 @@ type
     function  LoadParametersFromFile( FileName : String ) : Integer;
     procedure SaveParametersToFile( FileName : String );
     function  CreateParameters( WithFileName : Boolean = True ) : String;
+    property  SelectionMode : Integer read fSelectionMode write SetSelectionMode;
   end;
 
 var
@@ -244,6 +261,9 @@ end;
 
 procedure TFrmVideoCompare.OnChange(Sender: TObject);
 begin
+  if ( Sender = flIn1 ) then
+    UpdateSelection;
+
   edtFilterLeft.Enabled  := ( edtFilterBoth.Text = '' );
   edtFilterRight.Enabled := edtFilterLeft.Enabled;
   edtFilterBoth.Enabled := ( edtFilterLeft.Text = '' ) AND ( edtFilterRight.Text = '' );
@@ -273,6 +293,11 @@ procedure TFrmVideoCompare.rgWindowClick(Sender: TObject);
 begin
   SetEnabledForControls( pnlWindowSize, TRadioGroup( Sender ).ItemIndex = 1 ); // Custom
   OnChange( Sender );
+end;
+
+procedure TFrmVideoCompare.rbSelectionModeClick(Sender: TObject);
+begin
+  SetSelectionMode( GetSelectionMode( Sender ) );
 end;
 
 procedure TFrmVideoCompare.cbbToneMapModeLeftClick(Sender: TObject);
@@ -314,6 +339,9 @@ begin
   S := Ini.ReadString( PARAMETER_SECTION, 'Directory2', '' );
   if DirectoryExists( S ) then
     dirEdtIn2.Directory := S;
+
+  SelectionMode                     := Ini.ReadInteger( PARAMETER_SECTION, 'Selection Mode', 0 );
+  edtSelectionModeText.Text         := Ini.ReadString( PARAMETER_SECTION, 'Selection Mode Text', '' );
 
   chkHighDPI.Checked                := Ini.ReadBool( PARAMETER_SECTION, 'High DPI', False );
   chk10Bit.Checked                  := Ini.ReadBool( PARAMETER_SECTION, '10 Bit', False );
@@ -373,6 +401,9 @@ begin
   Ini.WriteString( PARAMETER_SECTION, 'Directory1', dirEdtIn1.Directory );
   Ini.WriteString( PARAMETER_SECTION, 'Directory2', dirEdtIn2.Directory );
 
+  Ini.WriteInteger( PARAMETER_SECTION, 'Selection Mode', fSelectionMode );
+  Ini.WriteString( PARAMETER_SECTION, 'Selection Mode Text', edtSelectionModeText.Text );
+
   Ini.WriteBool( PARAMETER_SECTION, 'High DPI', chkHighDPI.Checked );
   Ini.WriteBool( PARAMETER_SECTION, '10 Bit', chk10Bit.Checked );
   Ini.WriteBool( PARAMETER_SECTION, 'Fast Alignment', chkFastAlignment.Checked );
@@ -416,6 +447,124 @@ begin
 end;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+function TFrmVideoCompare.GetSelectionMode( RadioButton : TObject ) : Integer;
+begin
+  if ( RadioButton = rbSelectionModeDefault ) then
+    result := 0
+  else if ( RadioButton = rbSelectionModeExtension ) then
+    result := 1
+  else if ( RadioButton = rbSelectionModePrefix ) then
+    result := 2
+  else if ( RadioButton = rbSelectionModeSuffix ) then
+    result := 3
+  else if ( RadioButton = rbSelectionModeID ) then
+    result := 4
+  else if ( RadioButton = rbSelectionModeName ) then
+    result := 5
+  else
+    result := -1;
+end;
+
+{
+function TFrmVideoCompare.GetSelectionMode : Integer;
+begin
+  if rbSelectionModeDefault.Checked then
+    result := 0
+  else if rbSelectionModeExtension.Checked then
+    result := 1
+  else if rbSelectionModePrefix.Checked then
+    result := 2
+  else if rbSelectionModeSuffix.Checked then
+    result := 3
+  else if rbSelectionModeID.Checked then
+    result := 4
+  else if rbSelectionModeName.Checked then
+    result := 5
+  else
+    result := -1;
+end;
+}
+
+procedure TFrmVideoCompare.SetSelectionMode( ID : Integer );
+var
+  b : Boolean;
+begin
+  b := ( CompareText( ExcludeTrailingPathDelimiter( dirEdtIn1.Directory ), ExcludeTrailingPathDelimiter( dirEdtIn2.Directory ) ) = 0 );
+  if ( ID >= 4 ) AND b then
+    ID := 0;
+
+  fSelectionMode := ID;
+  case ID of
+//    0 : rbSelectionModeDefault.Checked := True;
+    1 : rbSelectionModeExtension.Checked := True;
+    2 : rbSelectionModePrefix.Checked := True;
+    3 : rbSelectionModeSuffix.Checked := True;
+    4 : rbSelectionModeID.Checked := True;
+    5 : rbSelectionModeName.Checked := True;
+  else
+    rbSelectionModeDefault.Checked := True;
+  end;
+
+  rbSelectionModeID.Enabled := NOT b;
+  rbSelectionModeName.Enabled := NOT b;
+  edtSelectionModeText.Enabled := ( ID in [ 1..3 ] );
+  flIn2.Enabled := ( ID = 0 );
+
+  UpdateSelection;
+end;
+
+procedure TFrmVideoCompare.UpdateSelection;
+var
+  i  : Integer;
+  ID : Integer;
+  S  : String;
+begin
+  ID := -1;
+
+  case fSelectionMode of
+//    0 : Exit;
+    1..3,
+    5 : begin
+        S := ExtractFileName( flIn1.FileName );
+        if ( S = '' ) OR ( ( fSelectionMode <> 5 ) AND ( edtSelectionModeText.Text = '' ) ) then
+          begin
+          flIn2.ItemIndex := -1;
+          Exit;
+          end;
+
+        case fSelectionMode of
+          1 : S := ChangeFileExt( S, '.' + edtSelectionModeText.Text ); // Extension
+          2 : S := edtSelectionModeText.Text + S; // Prefix
+          3 : S := ChangeFileExt( S, edtSelectionModeText.Text + ExtractFileExt( S ) ); // Suffix
+//          5 : // Name
+        end;
+
+        for i := 0 to flIn2.Count-1 do
+          begin
+          if ( CompareText( S, ExtractFileName( flIn2.Items[ i ] ) ) = 0 ) then
+            begin
+            ID := i;
+            break;
+            end;
+          end;
+        end;
+
+    4 : begin
+        ID := flIn1.ItemIndex;
+        if ( ID >= flIn2.Count ) then
+          ID := -1;
+        end;
+  end;
+
+  flIn2.ItemIndex := ID;
+end;
+
+procedure TFrmVideoCompare.edtSelectionModeTextChange(Sender: TObject);
+begin
+  UpdateSelection;
+end;
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 procedure TFrmVideoCompare.dirEdtIn1Change(Sender: TObject);
 begin
   if DirectoryExists( TJvDirectoryEdit( Sender ).Directory ) then
@@ -425,6 +574,9 @@ begin
     end
   else
     flIn1.Clear;
+
+  SelectionMode := fSelectionMode;
+  UpdateSelection;
 end;
 
 procedure TFrmVideoCompare.dirEdtIn2Change(Sender: TObject);
@@ -436,6 +588,9 @@ begin
     end
   else
     flIn2.Clear;
+
+  SelectionMode := fSelectionMode;
+  UpdateSelection;
 end;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
