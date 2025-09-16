@@ -126,12 +126,12 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=
 FileDescription=
-FileVersion=1.0.2.0
+FileVersion=1.0.3.2
 InternalName=
-LegalCopyright=TetzkatLipHoka © 2022-2024
+LegalCopyright=TetzkatLipHoka © 2022-2025
 LegalTrademarks=
 OriginalFilename=
 ProductName=Video Compare GUI
-ProductVersion=1.0.2.0
+ProductVersion=1.0.3.2
 [Excluded Packages]
 c:\program files (x86)\borland\delphi7\Bin\dcldss70.bpl=Borland Entscheidungsanalysekomponenten

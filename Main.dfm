@@ -14,7 +14,6 @@ object FrmVideoCompare: TFrmVideoCompare
   OldCreateOrder = False
   Position = poScreenCenter
   PrintScale = poNone
-  Scaled = False
   ShowHint = True
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -979,29 +978,32 @@ object FrmVideoCompare: TFrmVideoCompare
           Height = 546
           Align = alClient
           Caption = 
-            '- H: Toggle on-screen help text for controls'#13#10'- Space: Toggle pl' +
-            'ay/pause'#13#10'- Comma `,`: Toggle bidirectional in-buffer loop/pause' +
-            #13#10'- Period `.`: Toggle forward-only in-buffer loop/pause'#13#10'- Esca' +
-            'pe: Quit'#13#10'- Down arrow: Seek 15 seconds backward'#13#10'- Left arrow: ' +
-            'Seek 1 second backward'#13#10'- Page down: Seek 600 seconds backward'#13#10 +
-            '- Up arrow: Seek 15 seconds forward'#13#10'- Right arrow: Seek 1 secon' +
-            'd forward'#13#10'- Page up: Seek 600 seconds forward'#13#10'- J: Reduce play' +
-            'back speed'#13#10'- L: Increase playback speed'#13#10'- S: Swap left and rig' +
-            'ht video'#13#10'- A: Move to the previous frame in the buffer'#13#10'- D: Mo' +
-            've to the next frame in the buffer'#13#10'--> Hold `SHIFT` to decode a' +
-            'nd move to the next frame.'#13#10'- F: Save both frames as PNG images ' +
-            'in the current directory'#13#10'- P: Print mouse position and pixel va' +
-            'lue under cursor to console'#13#10'- M: Print image similarity metrics' +
-            ' to console'#13#10'- Z: Magnify area around cursor (result in lower le' +
-            'ft corner)'#13#10'- C: Magnify area around cursor (result in lower rig' +
-            'ht corner)'#13#10'- R: Re-center and reset zoom to 100% (x1)'#13#10'- 1: Tog' +
-            'gle hide/show left video'#13#10'- 2: Toggle hide/show right video'#13#10'- 3' +
-            ': Toggle hide/show HUD'#13#10'- 5: Zoom 50% (x0.5)'#13#10'- 6: Zoom 100% (x1' +
-            ')'#13#10'- 7: Zoom 200% (x2)'#13#10'- 8: Zoom 400% (x4)'#13#10'- 0: Toggle video/s' +
-            'ubtraction mode'#13#10'- Plus `+`: Time-shift right video 1 frame forw' +
-            'ard'#13#10'- Minus `-`: Time-shift right video 1 frame backward'#13#10'--> H' +
-            'old `CTRL` for 10 or `ALT` for 100 Frames '#13#10#13#10'Use MouseWheel to ' +
-            'Zoom, Pan by holding right mouse button.'
+            '- H: Toggle on-screen help text for controls'#13#10'- V: Toggle video ' +
+            'info overlay'#13#10'- Space: Toggle play/pause'#13#10'- Comma `,`: Toggle bi' +
+            'directional in-buffer loop/pause'#13#10'- Period `.`: Toggle forward-o' +
+            'nly in-buffer loop/pause'#13#10'- Escape: Quit'#13#10'- Down arrow: Seek 15 ' +
+            'seconds backward'#13#10'- Left arrow: Seek 1 second backward'#13#10'- Page d' +
+            'own: Seek 600 seconds backward'#13#10'- Up arrow: Seek 15 seconds forw' +
+            'ard'#13#10'- Right arrow: Seek 1 second forward'#13#10'- Page up: Seek 600 s' +
+            'econds forward'#13#10'- J: Reduce playback speed'#13#10'- L: Increase playba' +
+            'ck speed'#13#10'- S: Swap left and right video'#13#10'- A: Move to the previ' +
+            'ous frame in the buffer'#13#10'- D: Move to the next frame in the buff' +
+            'er'#13#10'--> Hold `SHIFT` to decode and move to the next frame.'#13#10'- F:' +
+            ' Save both frames as PNG images in the current directory'#13#10'- P: P' +
+            'rint mouse position and pixel value under cursor to console'#13#10'- M' +
+            ': Print image similarity metrics to console'#13#10'- Z: Magnify area a' +
+            'round cursor (result in lower left corner)'#13#10'- C: Magnify area ar' +
+            'ound cursor (result in lower right corner)'#13#10'- R: Re-center and r' +
+            'eset zoom to 100% (x1)'#13#10'- 1: Toggle hide/show left video'#13#10'- 2: T' +
+            'oggle hide/show right video'#13#10'- 3: Toggle hide/show HUD'#13#10'- 5: Zoo' +
+            'm 50% (x0.5)'#13#10'- 6: Zoom 100% (x1)'#13#10'- 7: Zoom 200% (x2)'#13#10'- 8: Zoo' +
+            'm 400% (x4)'#13#10'- 0: Toggle video/subtraction mode'#13#10'- Plus `+`: Tim' +
+            'e-shift right video 1 frame forward'#13#10'- Minus `-`: Time-shift rig' +
+            'ht video 1 frame backward'#13#10'--> Hold `CTRL` for 10 or `ALT` for 1' +
+            '00 Frames '#13#10'- `CTRL+C` (Windows) or `CMD+C` to copy current Time' +
+            'stamp '#13#10'- `CTRL+V` (Windows) or `CMD+V` to seek to Timestamp in ' +
+            'Clipboard'#13#10'- `CTRL+F` create region and save as PNG'#13#10#13#10'Use Mouse' +
+            'Wheel to Zoom, Pan by holding right mouse button.'
         end
       end
     end
