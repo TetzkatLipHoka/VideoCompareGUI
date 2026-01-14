@@ -2,7 +2,7 @@ object FrmVideoCompare: TFrmVideoCompare
   Left = 626
   Top = 178
   Caption = 'Video Compare'
-  ClientHeight = 621
+  ClientHeight = 814
   ClientWidth = 702
   Color = clBtnFace
   DragMode = dmAutomatic
@@ -21,7 +21,7 @@ object FrmVideoCompare: TFrmVideoCompare
   TextHeight = 13
   object splParams: TSplitter
     Left = 0
-    Top = 576
+    Top = 769
     Width = 702
     Height = 3
     Cursor = crVSplit
@@ -31,20 +31,20 @@ object FrmVideoCompare: TFrmVideoCompare
     Left = 0
     Top = 0
     Width = 702
-    Height = 576
+    Height = 769
     Align = alClient
     TabOrder = 0
     OnResize = pnlTopResize
     object splFile: TSplitter
       Left = 193
       Top = 1
-      Height = 574
+      Height = 767
     end
     object grpFile2: TGroupBox
       Left = 196
       Top = 1
       Width = 187
-      Height = 574
+      Height = 767
       Align = alClient
       Caption = 'File 2'
       TabOrder = 0
@@ -62,7 +62,7 @@ object FrmVideoCompare: TFrmVideoCompare
         Left = 2
         Top = 36
         Width = 183
-        Height = 536
+        Height = 729
         Align = alClient
         ItemHeight = 13
         Mask = 
@@ -78,7 +78,7 @@ object FrmVideoCompare: TFrmVideoCompare
       Left = 1
       Top = 1
       Width = 192
-      Height = 574
+      Height = 767
       Align = alLeft
       Caption = 'File 1'
       TabOrder = 1
@@ -96,7 +96,7 @@ object FrmVideoCompare: TFrmVideoCompare
         Left = 2
         Top = 36
         Width = 188
-        Height = 536
+        Height = 729
         Align = alClient
         ItemHeight = 13
         Mask = 
@@ -112,7 +112,7 @@ object FrmVideoCompare: TFrmVideoCompare
       Left = 383
       Top = 1
       Width = 318
-      Height = 574
+      Height = 767
       ActivePage = tsDefault
       Align = alRight
       TabOrder = 2
@@ -120,7 +120,7 @@ object FrmVideoCompare: TFrmVideoCompare
         Caption = 'Default'
         DesignSize = (
           310
-          546)
+          739)
         object chkHighDPI: TCheckBox
           Left = 187
           Top = 131
@@ -308,7 +308,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object btnLaunch: TButton
           Left = 0
-          Top = 521
+          Top = 714
           Width = 310
           Height = 25
           Action = actLaunch
@@ -317,7 +317,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object chkAutoFilters: TCheckBox
           Left = 187
-          Top = 179
+          Top = 193
           Width = 76
           Height = 17
           Caption = 'Auto Filters'
@@ -330,7 +330,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object grpWheelSensitivity: TGroupBox
           Left = 57
-          Top = 197
+          Top = 213
           Width = 55
           Height = 41
           Hint = 'Mouse wheel sensitivity (Default is 1)'#13#10
@@ -356,12 +356,13 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object grpShift: TGroupBox
           Left = 1
-          Top = 197
+          Top = 213
           Width = 55
           Height = 41
           Hint = 
-            'Shift the time stamps of the right video by a user-specified num' +
-            'ber of seconds'#13#10
+            'Shift the time stamps of the right video by a user-specified tim' +
+            'e offset, optionally with a multiplier (e.g. 0.150, -0.1, x1.04+' +
+            '0.1, x25.025/24-1:30.5)'
           Caption = 'Shift'
           TabOrder = 11
           DesignSize = (
@@ -384,8 +385,8 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object grpToneMapMode: TGroupBox
           Left = 115
-          Top = 197
-          Width = 190
+          Top = 213
+          Width = 192
           Height = 41
           Caption = 'Tone-Map Mode'
           TabOrder = 12
@@ -426,7 +427,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object grpPeakNits: TGroupBox
           Left = 1
-          Top = 237
+          Top = 253
           Width = 100
           Height = 41
           Hint = 'Video peak luminance in nits (Default=100)'
@@ -467,7 +468,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object grpBoostTone: TGroupBox
           Left = 104
-          Top = 237
+          Top = 253
           Width = 142
           Height = 41
           Hint = 'Tone-mapping strength multiplicatior (Default=1)'
@@ -508,7 +509,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object btnCreateShellLink: TButton
           Left = 1
-          Top = 280
+          Top = 296
           Width = 154
           Height = 25
           Action = actCreateShellLink
@@ -516,7 +517,7 @@ object FrmVideoCompare: TFrmVideoCompare
         end
         object btnRemoveShellLink: TButton
           Left = 157
-          Top = 280
+          Top = 296
           Width = 154
           Height = 25
           Action = actRemoveShellLink
@@ -623,6 +624,18 @@ object FrmVideoCompare: TFrmVideoCompare
             TabOrder = 6
             OnChange = edtSelectionModeTextChange
           end
+        end
+        object chkSubtractionMode: TCheckBox
+          Left = 187
+          Top = 178
+          Width = 100
+          Height = 17
+          Hint = 'start in subtraction (difference) view'
+          Caption = 'Subtraction Mode'
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 20
+          OnClick = OnChange
         end
       end
       object tsAdvanced: TTabSheet
@@ -967,6 +980,170 @@ object FrmVideoCompare: TFrmVideoCompare
             OnChange = OnChange
           end
         end
+        object grpScopes: TGroupBox
+          Left = 0
+          Top = 545
+          Width = 310
+          Height = 196
+          Align = alTop
+          Caption = 'Scopes'
+          TabOrder = 9
+          DesignSize = (
+            310
+            196)
+          object chkHistogramWindow: TCheckBox
+            Left = 7
+            Top = 17
+            Width = 112
+            Height = 17
+            Hint = 'open always-on-top histogram scopes window'
+            Caption = 'Histogram Window'
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 0
+            OnClick = OnChange
+          end
+          object edtHistogramOptions: TLabeledEdit
+            Left = 46
+            Top = 36
+            Width = 260
+            Height = 21
+            Hint = 
+              'Waveform FFmpeg filter options (e.g. '#39'graticule=orange:display=s' +
+              'tack:scale=ire:flags=numbers+dots:intensity=0.1:components=7:fil' +
+              'ter=lowpass'#39')'
+            Anchors = [akLeft, akTop, akRight]
+            EditLabel.Width = 37
+            EditLabel.Height = 13
+            EditLabel.Caption = 'Options'
+            Enabled = False
+            LabelPosition = lpLeft
+            TabOrder = 1
+            OnChange = OnChange
+          end
+          object chkVectorScopeWindow: TCheckBox
+            Left = 7
+            Top = 60
+            Width = 123
+            Height = 17
+            Hint = 'open always-on-top VectorScope scopes window'
+            Caption = 'VectorScope Window'
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 2
+            OnClick = OnChange
+          end
+          object edtVectorScopeOptions: TLabeledEdit
+            Left = 46
+            Top = 79
+            Width = 260
+            Height = 21
+            Hint = 
+              'Vectorscope FFmpeg filter options (e.g. '#39'mode=color4:graticule=g' +
+              'reen:envelope=instant+peak:flags=name+white+black'#39')'
+            Anchors = [akLeft, akTop, akRight]
+            EditLabel.Width = 37
+            EditLabel.Height = 13
+            EditLabel.Caption = 'Options'
+            Enabled = False
+            LabelPosition = lpLeft
+            TabOrder = 3
+            OnChange = OnChange
+          end
+          object chkWaveformWindow: TCheckBox
+            Left = 7
+            Top = 102
+            Width = 114
+            Height = 17
+            Hint = 'open always-on-top Waveform scopes window'
+            Caption = 'Waveform Window'
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 4
+            OnClick = OnChange
+          end
+          object edtWaveformOptions: TLabeledEdit
+            Left = 46
+            Top = 121
+            Width = 260
+            Height = 21
+            Hint = 
+              'Waveform FFmpeg filter options (e.g. '#39'graticule=orange:display=s' +
+              'tack:scale=ire:flags=numbers+dots:intensity=0.1:components=7:fil' +
+              'ter=lowpass'#39')'
+            Anchors = [akLeft, akTop, akRight]
+            EditLabel.Width = 37
+            EditLabel.Height = 13
+            EditLabel.Caption = 'Options'
+            Enabled = False
+            LabelPosition = lpLeft
+            TabOrder = 5
+            OnChange = OnChange
+          end
+          object chkScopeNoTop: TCheckBox
+            Left = 129
+            Top = 148
+            Width = 141
+            Height = 17
+            Hint = 'do not keep scope windows always on top'
+            Caption = 'Scopes dont stay on Top'
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 6
+            OnClick = OnChange
+          end
+          object grpScopeSize: TGroupBox
+            Left = 7
+            Top = 150
+            Width = 116
+            Height = 42
+            TabOrder = 7
+            object lblScopeSizeX: TLabel
+              Left = 55
+              Top = 20
+              Width = 6
+              Height = 13
+              Caption = 'x'
+              Enabled = False
+            end
+            object edtScopeWidth: TEdit
+              Left = 5
+              Top = 16
+              Width = 48
+              Height = 21
+              Enabled = False
+              TabOrder = 0
+              Text = '1024'
+              OnKeyDown = UnsignedKeyDown
+              OnKeyPress = UnsignedKeyPress
+              OnKeyUp = edtWidthKeyUp
+            end
+            object edtScopeHeight: TEdit
+              Left = 64
+              Top = 16
+              Width = 48
+              Height = 21
+              Enabled = False
+              TabOrder = 1
+              Text = '256'
+              OnKeyDown = UnsignedKeyDown
+              OnKeyPress = UnsignedKeyPress
+              OnKeyUp = edtHeightKeyUp
+            end
+          end
+          object chkScopeSize: TCheckBox
+            Left = 12
+            Top = 144
+            Width = 43
+            Height = 17
+            Hint = 'Initial scope-window size'
+            Caption = 'Size'
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 8
+            OnClick = OnChange
+          end
+        end
       end
       object tsHotKeys: TTabSheet
         Caption = 'HotKeys'
@@ -975,7 +1152,7 @@ object FrmVideoCompare: TFrmVideoCompare
           Left = 0
           Top = 0
           Width = 310
-          Height = 546
+          Height = 739
           Align = alClient
           Caption = 
             '- H: Toggle on-screen help text for controls'#13#10'- V: Toggle video ' +
@@ -997,20 +1174,24 @@ object FrmVideoCompare: TFrmVideoCompare
             'eset zoom to 100% (x1)'#13#10'- 1: Toggle hide/show left video'#13#10'- 2: T' +
             'oggle hide/show right video'#13#10'- 3: Toggle hide/show HUD'#13#10'- 5: Zoo' +
             'm 50% (x0.5)'#13#10'- 6: Zoom 100% (x1)'#13#10'- 7: Zoom 200% (x2)'#13#10'- 8: Zoo' +
-            'm 400% (x4)'#13#10'- 0: Toggle video/subtraction mode'#13#10'- Plus `+`: Tim' +
-            'e-shift right video 1 frame forward'#13#10'- Minus `-`: Time-shift rig' +
-            'ht video 1 frame backward'#13#10'--> Hold `CTRL` for 10 or `ALT` for 1' +
-            '00 Frames '#13#10'- `CTRL+C` (Windows) or `CMD+C` to copy current Time' +
-            'stamp '#13#10'- `CTRL+V` (Windows) or `CMD+V` to seek to Timestamp in ' +
-            'Clipboard'#13#10'- `CTRL+F` create region and save as PNG'#13#10#13#10'Use Mouse' +
-            'Wheel to Zoom, Pan by holding right mouse button.'
+            'm 400% (x4)'#13#10'- 0: Toggle video/subtraction mode'#13#10'- F1: Toggle Hi' +
+            'stogram window'#13#10'- F2: Toggle Vectorscope window'#13#10'- F3: Toggle Wa' +
+            'veform window'#13#10'- Plus `+`: Time-shift right video 1 frame forwar' +
+            'd'#13#10'- Minus `-`: Time-shift right video 1 frame backward'#13#10'--> Hol' +
+            'd `CTRL` for 10 or `ALT` for 100 Frames '#13#10'- X: Show the current ' +
+            'video frame and UI update rates (in FPS)'#13#10'- Y: Cycle through sub' +
+            'traction modes'#13#10'- U: Toggle luminance-only subtraction mode'#13#10'- `' +
+            'CTRL+C` (Windows) or `CMD+C` to copy current Timestamp '#13#10'- `CTRL' +
+            '+V` (Windows) or `CMD+V` to seek to Timestamp in Clipboard'#13#10'- `C' +
+            'TRL+F` create region and save as PNG'#13#10#13#10'Use MouseWheel to Zoom, ' +
+            'Pan by holding right mouse button.'
         end
       end
     end
   end
   object mmoParams: TMemo
     Left = 0
-    Top = 579
+    Top = 772
     Width = 702
     Height = 42
     Align = alBottom

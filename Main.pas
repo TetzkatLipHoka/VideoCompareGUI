@@ -96,6 +96,20 @@ type
     rbSelectionModeID: TRadioButton;
     rbSelectionModeName: TRadioButton;
     edtSelectionModeText: TEdit;
+    chkSubtractionMode: TCheckBox;
+    grpScopes: TGroupBox;
+    chkHistogramWindow: TCheckBox;
+    edtHistogramOptions: TLabeledEdit;
+    chkVectorScopeWindow: TCheckBox;
+    edtVectorScopeOptions: TLabeledEdit;
+    chkWaveformWindow: TCheckBox;
+    edtWaveformOptions: TLabeledEdit;
+    chkScopeNoTop: TCheckBox;
+    grpScopeSize: TGroupBox;
+    lblScopeSizeX: TLabel;
+    edtScopeWidth: TEdit;
+    edtScopeHeight: TEdit;
+    chkScopeSize: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure OnChange(Sender: TObject);
@@ -219,6 +233,8 @@ end;
 const
   DEFAULT_WIDTH          = 1280;
   DEFAULT_HEIGHT         = 1024;
+  DEFAULT_SCOPE_WIDTH    = 1024;
+  DEFAULT_SCOPE_HEIGHT   = 256;
   DEFAULT_BUFFER_SIZE    = 50;
   DEFAULT_WHEEL          = 1.0;
   DEFAULT_WHEEL_INTERNAL = -1.0;
@@ -266,19 +282,24 @@ begin
 
   edtFilterLeft.Enabled  := ( edtFilterBoth.Text = '' );
   edtFilterRight.Enabled := edtFilterLeft.Enabled;
-  edtFilterBoth.Enabled := ( edtFilterLeft.Text = '' ) AND ( edtFilterRight.Text = '' );
+  edtFilterBoth.Enabled  := ( edtFilterLeft.Text = '' ) AND ( edtFilterRight.Text = '' );
+
+  edtHistogramOptions.Enabled   := chkHistogramWindow.Checked;
+  edtVectorScopeOptions.Enabled := chkVectorScopeWindow.Checked;
+  edtWaveformOptions.Enabled    := chkWaveformWindow.Checked;
+  SetEnabledForControls( grpScopeSize, chkScopeSize.Checked );
 
   edtDemuxerLeft.Enabled  := ( edtDemuxerBoth.Text = '' );
   edtDemuxerRight.Enabled := edtDemuxerLeft.Enabled;
-  edtDemuxerBoth.Enabled := ( edtDemuxerLeft.Text = '' ) AND ( edtDemuxerRight.Text = '' );
+  edtDemuxerBoth.Enabled  := ( edtDemuxerLeft.Text = '' ) AND ( edtDemuxerRight.Text = '' );
 
   edtDecoderLeft.Enabled  := ( edtDecoderBoth.Text = '' );
   edtDecoderRight.Enabled := edtDecoderLeft.Enabled;
-  edtDecoderBoth.Enabled := ( edtDecoderLeft.Text = '' ) AND ( edtDecoderRight.Text = '' );
+  edtDecoderBoth.Enabled  := ( edtDecoderLeft.Text = '' ) AND ( edtDecoderRight.Text = '' );
 
   edtHardwareAccelerationLeft.Enabled  := ( edtHardwareAccelerationBoth.Text = '' );
   edtHardwareAccelerationRight.Enabled := edtHardwareAccelerationLeft.Enabled;
-  edtHardwareAccelerationBoth.Enabled := ( edtHardwareAccelerationLeft.Text = '' ) AND ( edtHardwareAccelerationRight.Text = '' );
+  edtHardwareAccelerationBoth.Enabled  := ( edtHardwareAccelerationLeft.Text = '' ) AND ( edtHardwareAccelerationRight.Text = '' );
 
   fParams := CreateParameters;
   mmoParams.Text := fParams;
@@ -347,6 +368,7 @@ begin
   chk10Bit.Checked                  := Ini.ReadBool( PARAMETER_SECTION, '10 Bit', False );
   chkFastAlignment.Checked          := Ini.ReadBool( PARAMETER_SECTION, 'Fast Alignment', False );
   chkBilinearTexture.Checked        := Ini.ReadBool( PARAMETER_SECTION, 'Bilinear Texture', False );
+  chkSubtractionMode.Checked        := Ini.ReadBool( PARAMETER_SECTION, 'Subtraction Mode', False );
   cbbDisplay.ItemIndex              := Ini.ReadInteger( PARAMETER_SECTION, 'Display', 0 );
   cbbMode.ItemIndex                 := Ini.ReadInteger( PARAMETER_SECTION, 'Mode', 0 );
   rgWindow.ItemIndex                := Ini.ReadInteger( PARAMETER_SECTION, 'Window Mode', 0 );
@@ -365,13 +387,23 @@ begin
   edtFilterBoth.Text                := Ini.ReadString( PARAMETER_SECTION, 'Filter (Both)', '' );
   edtFilterLeft.Text                := Ini.ReadString( PARAMETER_SECTION, 'Filter (Left)', '' );
   edtFilterRight.Text               := Ini.ReadString( PARAMETER_SECTION, 'Filter (Right)', '' );
+  chkHistogramWindow.Checked        := Ini.ReadBool( PARAMETER_SECTION, 'Histogram Window', False );
+  edtHistogramOptions.Text          := Ini.ReadString( PARAMETER_SECTION, 'Histogram Options', '' );
+  chkVectorScopeWindow.Checked      := Ini.ReadBool( PARAMETER_SECTION, 'VectorScope Window', False );
+  edtVectorScopeOptions.Text        := Ini.ReadString( PARAMETER_SECTION, 'VectorScope Options', '' );
+  chkWaveformWindow.Checked         := Ini.ReadBool( PARAMETER_SECTION, 'Waveform Window', False );
+  edtWaveformOptions.Text           := Ini.ReadString( PARAMETER_SECTION, 'Waveform Options', '' );
+  chkScopeSize.Checked              := Ini.ReadBool( PARAMETER_SECTION, 'Scope Size', False );
+  edtScopeWidth.Text                := IntToStr( Ini.ReadInteger( PARAMETER_SECTION, 'Scope Window Width', DEFAULT_SCOPE_WIDTH ) );
+  edtScopeHeight.Text               := IntToStr( Ini.ReadInteger( PARAMETER_SECTION, 'Scope Window Height', DEFAULT_SCOPE_HEIGHT ) );
+  chkScopeNoTop.Checked             := Ini.ReadBool( PARAMETER_SECTION, 'Scope No Top', False );
   edtDemuxerBoth.Text               := Ini.ReadString( PARAMETER_SECTION, 'Demuxer (Both)', '' );
   edtDemuxerLeft.Text               := Ini.ReadString( PARAMETER_SECTION, 'Demuxer (Left)', '' );
   edtDemuxerRight.Text              := Ini.ReadString( PARAMETER_SECTION, 'Demuxer (Right)', '' );
   edtDecoderBoth.Text               := Ini.ReadString( PARAMETER_SECTION, 'Decoder (Both)', '' );
   edtDecoderLeft.Text               := Ini.ReadString( PARAMETER_SECTION, 'Decoder (Left)', '' );
   edtDecoderRight.Text              := Ini.ReadString( PARAMETER_SECTION, 'Decoder (Right)', '' );
-  edtHardwareAccelerationBoth.Text  := Ini.ReadString( PARAMETER_SECTION, 'Hardware Acceleration (Both)', '' );  
+  edtHardwareAccelerationBoth.Text  := Ini.ReadString( PARAMETER_SECTION, 'Hardware Acceleration (Both)', '' );
   edtHardwareAccelerationLeft.Text  := Ini.ReadString( PARAMETER_SECTION, 'Hardware Acceleration (Left)', '' );
   edtHardwareAccelerationRight.Text := Ini.ReadString( PARAMETER_SECTION, 'Hardware Acceleration (Right)', '' );
   edtColorSpace.Text                := Ini.ReadString( PARAMETER_SECTION, 'Color Space', '' );
@@ -408,6 +440,7 @@ begin
   Ini.WriteBool( PARAMETER_SECTION, '10 Bit', chk10Bit.Checked );
   Ini.WriteBool( PARAMETER_SECTION, 'Fast Alignment', chkFastAlignment.Checked );
   Ini.WriteBool( PARAMETER_SECTION, 'Bilinear Texture', chkBilinearTexture.Checked );
+  Ini.WriteBool( PARAMETER_SECTION, 'Subtraction Mode', chkSubtractionMode.Checked );
   Ini.WriteInteger( PARAMETER_SECTION, 'Display', cbbDisplay.ItemIndex );
   Ini.WriteInteger( PARAMETER_SECTION, 'Mode', cbbMode.ItemIndex );
 
@@ -427,6 +460,16 @@ begin
   Ini.WriteString( PARAMETER_SECTION, 'Filter (Both)', edtFilterBoth.Text );
   Ini.WriteString( PARAMETER_SECTION, 'Filter (Left)', edtFilterLeft.Text );
   Ini.WriteString( PARAMETER_SECTION, 'Filter (Right)', edtFilterRight.Text );
+  Ini.WriteBool( PARAMETER_SECTION, 'Histogram Window', chkHistogramWindow.Checked );
+  Ini.WriteString( PARAMETER_SECTION, 'Histogram Options', edtHistogramOptions.Text );
+  Ini.WriteBool( PARAMETER_SECTION, 'VectorScope Window', chkVectorScopeWindow.Checked );
+  Ini.WriteString( PARAMETER_SECTION, 'VectorScope Options', edtVectorScopeOptions.Text );
+  Ini.WriteBool( PARAMETER_SECTION, 'Waveform Window', chkWaveformWindow.Checked );
+  Ini.WriteString( PARAMETER_SECTION, 'Waveform Options', edtWaveformOptions.Text );
+  Ini.WriteBool( PARAMETER_SECTION, 'Scope Size', chkScopeSize.Checked );
+  Ini.WriteInteger( PARAMETER_SECTION, 'Scope Window Width', StrToIntDef( edtScopeWidth.Text, DEFAULT_SCOPE_WIDTH ) );
+  Ini.WriteInteger( PARAMETER_SECTION, 'Scope Window Height', StrToIntDef( edtScopeHeight.Text, DEFAULT_SCOPE_HEIGHT ) );
+  Ini.WriteBool( PARAMETER_SECTION, 'Scope No Top', chkScopeNoTop.Checked );
   Ini.WriteString( PARAMETER_SECTION, 'Demuxer (Both)', edtDemuxerBoth.Text );
   Ini.WriteString( PARAMETER_SECTION, 'Demuxer (Left)', edtDemuxerLeft.Text );
   Ini.WriteString( PARAMETER_SECTION, 'Demuxer (Right)', edtDemuxerRight.Text );
@@ -690,6 +733,9 @@ begin
   if chkBilinearTexture.Checked then
     result := result + '--bilinear-texture ';
 
+  if chkSubtractionMode.Checked then
+    result := result + '--subtraction-mode ';
+
   if ( cbbDisplay.ItemIndex > 0 ) then
     result := result + Format( '--display-number %d ', [ cbbDisplay.ItemIndex ] );
 
@@ -769,8 +815,38 @@ begin
       result := result + '--left-filters ' + edtFilterLeft.Text + ' ';
     if ( edtFilterRight.Text <> '' ) then
       result := result + '--right-filters ' + edtFilterRight.Text + ' ';
-    end;   
-    
+    end;
+
+  if chkHistogramWindow.checked then
+    begin
+    result := result + '--histogram-window ';
+
+    if ( edtHistogramOptions.Text <> '' ) then
+      result := result + '--histogram-options ' + edtHistogramOptions.Text + ' ';
+    end;
+
+  if chkVectorScopeWindow.checked then
+    begin
+    result := result + '--vectorscope-window ';
+
+    if ( edtVectorScopeOptions.Text <> '' ) then
+      result := result + '--vectorscope-options ' + edtVectorScopeOptions.Text + ' ';
+    end;
+
+  if chkWaveformWindow.checked then
+    begin
+    result := result + '--waveform-window ';
+
+    if ( edtWaveformOptions.Text <> '' ) then
+      result := result + '--waveform-options ' + edtWaveformOptions.Text + ' ';
+    end;
+
+  if chkScopeSize.Checked then
+    result := result + Format( '--scope-size %dx%d ', [ StrToIntDef( edtScopeWidth.Text, DEFAULT_SCOPE_WIDTH ), StrToIntDef( edtScopeHeight.Text, DEFAULT_SCOPE_HEIGHT ) ] );
+
+  if chkScopeNoTop.Checked then
+    result := result + '--scope-notop ';
+
   if ( edtDemuxerBoth.Text <> '' ) then
     result := result + '--demuxer ' + edtDemuxerBoth.Text + ' '
   else
@@ -780,7 +856,7 @@ begin
     if ( edtDemuxerRight.Text <> '' ) then
       result := result + '--right-demuxer ' + edtDemuxerRight.Text + ' ';
     end;
-    
+
   if ( edtDecoderBoth.Text <> '' ) then
     result := result + '--decoder ' + edtDecoderBoth.Text + ' '
   else
